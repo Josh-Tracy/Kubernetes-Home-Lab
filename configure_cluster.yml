@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+- name: call roles
+  roles:
+    - configure_hosts
