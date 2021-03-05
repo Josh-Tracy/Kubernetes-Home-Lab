@@ -5,34 +5,40 @@
 # Assign worker nodes hostnames
 - name: Assign hostname for worker 01
   hostname:
-    name: "{{ k8s-worker-01 }}"
-  when: inventory_hostname == {{ worker_address_01 }}
+    name: "{{ k8s_worker_01 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.177'
 
 - name: Assign hostname for worker 02
   hostname:
-    name: "{{ k8s-worker-02 }}"
-  when: inventory_hostname == {{ worker_address_02 }}
+    name: "{{ k8s_worker_02 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.202'
 
 - name: Assign hostname for worker 03
   hostname:
-    name: "{{ k8s-worker-03 }}"
-  when: inventory_hostname == {{ worker_address_03 }}
+    name: "{{ k8s_worker_03 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.30'
 
 # Assign API Master Server Hostname
 - name: Assign hostname for K8's Master
   hostname:
-    name: "{{ k8s-master-01 }}"
-  when: inventory_hostname == {{ master_address_01 }}
+    name: "{{ k8s_master_01 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.240'
 
 # Assign Load Balancer Hostname
 - name: Assign hostname for Load Balancer
   hostname:
-    name: "{{ k8s-balancer-01 }}"
-  when: inventory_hostname == {{ balancer_address_01 }}
+    name: "{{ k8s_balancer_01 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.117'
 
 # Assign NFS/TFTP Server Hostname
 - name: Assign hostnames
   hostname:
-    name: "{{ management-01 }}"
-  when: inventory_hostname == {{ management_address_01 }}
+    name: "{{ management_01 }}"
+    use: debian
+  when: inventory_hostname == '192.168.50.113'
     
