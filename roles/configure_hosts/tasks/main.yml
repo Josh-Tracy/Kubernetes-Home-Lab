@@ -10,6 +10,7 @@
   when: inventory_hostname == '192.168.50.177'
   tags:
   - worker
+  - ip_address
 
 - name: Assign hostname for worker 02
   hostname:
@@ -17,6 +18,7 @@
   when: inventory_hostname == '192.168.50.202'
   tags:
   - worker
+  - ip_address
 
 - name: Assign hostname for worker 03
   hostname:
@@ -24,6 +26,7 @@
   when: inventory_hostname == '192.168.50.30'
   tags:
   - worker
+  - ip_address
 
 # Assign API Master Server Hostname
 - name: Assign hostname for K8's Master
@@ -32,6 +35,7 @@
   when: inventory_hostname == '192.168.50.240'
   tags:
   - master
+  - ip_address
 
 # Assign Load Balancer Hostname
 - name: Assign hostname for Load Balancer
@@ -40,6 +44,7 @@
   when: inventory_hostname == '192.168.50.117'
   tags:
   - load
+  - ip_address
 
 
 # Assign NFS/TFTP Server Hostname
@@ -49,6 +54,7 @@
   when: inventory_hostname == '192.168.50.113'
   tags:
   - management
+  - ip_address
 
 # Copy /etc/hosts file
 - name: Copy /etc/hosts
