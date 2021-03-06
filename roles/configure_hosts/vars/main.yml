@@ -1,6 +1,9 @@
 ---
 # vars file for configure_hosts
 #########################################
+
+#### Begin Hostnames and IP Addressess ####
+
 # Worker Node Addresses
 
 # 4GB RAM / 32GB Storage
@@ -35,3 +38,18 @@ k8s_balancer_01: k8sbalancer01
 # 8GB RAM / 64GB Storage
 management_address_01: 192.168.50.113
 management_01: management01
+
+#### End Hostnames and IP Addresses ####
+
+#### Begin Usernames and Passwords ####
+root_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          37313937636565653931653632623136303834326361613833663666653865396637613063373735
+          6661376462363231383335353364386635326165336334630a376530373564356666303839666363
+          66656630373064393465636232663865383737376532633431373465653530656463303934616133
+          3431313565633062320a643761303333313738323230303230613932613936386431343936313438
+          6437
+kubernetes_admin: k8sadmin
+
+
+#### End Usernames ####

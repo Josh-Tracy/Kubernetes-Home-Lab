@@ -47,6 +47,12 @@ This one only needs to be done from the machine you will manage all of the other
 To copy your ssh keys to the other hosts:
 - ssh-copy-id k8sadmin@k8sworker01 (do this for each host)
 
+Encrypting passwords
+------------
+
+* Create vault.pass in the playbook directory with a password that will be used to encrypt and decrypt with ansible vault
+* Create a .gitignore file and place the name of the vault.pass file in it
+* Run "ansible-vault encrypt_string --vault-password-file pass.vault 'password_to_encrypt' --name 'root_password'"
 
 Requirements
 ------------

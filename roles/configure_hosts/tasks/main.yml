@@ -63,5 +63,36 @@
     dest: /etc/hosts
   tags:
   - hosts
-   
+
+# Change the root password
+- name: Change the root password
+  user:
+    name: root
+    update_password: always
+    password: "{{ root_password }}"
+  tags:
+    - manage_users
+
+# Create Kubernetes Admin
+- name: Add k8sadmin to cluster
+  user:
+    name: "{{ kubernetes_admin }}"
+    comment: Kubernetes Admin
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+    create_home: yes
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+  tags:
+    - manage_users
+
+# Lock the default ubuntu account
+- name: Lock the default ubuntu account
+  user:
+    name: ubuntu
+    password_lock: yes
+
+  
     
