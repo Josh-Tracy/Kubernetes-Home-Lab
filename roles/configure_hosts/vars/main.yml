@@ -5,13 +5,13 @@
 
 # 4GB RAM / 32GB Storage
 worker_address_01: 192.168.50.177
-k8s_worker_01: k8s-worker-01
+k8s_worker_01: k8sworker01
 # 8GB RAM / 64GB Storage
 worker_address_02: 192.168.50.202
-k8s_worker_02: k8s-worker-02
+k8s_worker_02: k8sworker02
 
 # 8GB RAM / 64GB Storage
-k8s_worker_03: k8s-worker-03
+k8s_worker_03: k8sworker03
 worker_address_03: 192.168.50.30
 
 #########################################
@@ -19,18 +19,18 @@ worker_address_03: 192.168.50.30
 
 #4GB RAM / 32GB Storage
 master_address_01: 192.168.50.240
-k8s_master_01: k8s-master-01
+k8s_master_01: k8smaster01
 
 #########################################
 # Load Balancer Addressess
 
 #4GB RAM / 32GB Storage
-k8s-balancer_01: k8s-balancer-01
+k8s_balancer_01: k8sbalancer01
 balancer_address_01: 192.168.50.117
 
 #########################################
 # NFS/TFTP - Other Management Addressess
 
 # 8GB RAM / 64GB Storage
-management_01: management-01
+management_01: management01
 management_address_01: 192.168.50.113

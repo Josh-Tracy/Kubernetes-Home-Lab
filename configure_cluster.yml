@@ -4,5 +4,6 @@
 
 - name: call roles
   hosts: all
+  become: true
   roles:
     - configure_hosts
