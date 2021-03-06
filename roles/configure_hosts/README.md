@@ -14,11 +14,14 @@ Manual Commands to match this playbook
 -------------
 These assume you'r running sudo. The hostname, hosts file, and user will all need to be done on each machine you want them on. 
 
-To set a hostname: hostnamectl set-hostname
-To edit /etc/hosts: vi /etc/hosts
-  - Use "i" to enter insert mode and use the arrow keys to move around
-  - Hit "Esc" to exit insert mode and type ":wq" to write and quit the file
-To change the root password: passswd root
+To set a hostname: 
+- hostnamectl set-hostname
+- To edit /etc/hosts: vi /etc/hosts
+  * Use "i" to enter insert mode and use the arrow keys to move around
+  * Hit "Esc" to exit insert mode and type ":wq" to write and quit the file
+
+To change the root password: 
+- passswd root
 To add a user: useradd k8sadmin -c "kubernetes admin" -s /bin/bash
 To add a user to the sudo group: usermod -aG sudo k8sadmin
 To change the password for the user: passwd k8sadmin
