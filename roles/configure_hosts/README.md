@@ -23,16 +23,22 @@ To edit /etc/hosts:
 
 To change the root password: 
 - passswd root
+
 To add a user: 
 - useradd k8sadmin -c "kubernetes admin" -s /bin/bash
+
 To add a user to the sudo group:
 - usermod -aG sudo k8sadmin
+
 To change the password for the user:
 - passwd k8sadmin
+
 To make users home directory:
 - mkdir /home/k8sadmin && chown k8sadmin:k8sadmin /home/k8sadmin
+
 To lock the ubuntu account:
 - usermod -L ubuntu
+
 To create ssh keys for the user:
 - ssh-keygen (follow the prompts or hint "Enter" 3 times)
 
