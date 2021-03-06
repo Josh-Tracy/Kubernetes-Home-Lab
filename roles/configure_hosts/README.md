@@ -16,6 +16,7 @@ These assume you'r running sudo. The hostname, hosts file, and user will all nee
 
 To set a hostname: 
 - hostnamectl set-hostname
+
 To edit /etc/hosts: 
 - vi /etc/hosts
   * Use "i" to enter insert mode and use the arrow keys to move around
