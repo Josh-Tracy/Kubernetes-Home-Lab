@@ -49,4 +49,13 @@
   when: inventory_hostname == '192.168.50.113'
   tags:
   - management
+
+# Copy /etc/hosts file
+- name: Copy /etc/hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+  tags:
+  - hosts
+   
     

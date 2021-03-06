@@ -1,0 +1,23 @@
+127.0.0.1       localhost
+127.0.1.1       ubuntu
+
+# Workers
+{{ worker_address_01 }}  {{ k8s_worker_01 }}
+{{ worker_address_02 }}  {{ k8s_worker_02 }}
+{{ worker_address_03 }}  {{ k8s_worker_03 }}
+
+# Masters
+{{ master_address_01 }} {{ k8s_master_01 }}
+
+# Load Balancer
+{{ balancer_address_01 }}  {{ k8s_balancer_01 }}
+
+# Management
+{{ management_address_01 }}  {{ management_01}}
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
