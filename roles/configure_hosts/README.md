@@ -42,6 +42,14 @@ To lock the ubuntu account:
 To create ssh keys for the user:
 - ssh-keygen (follow the prompts or hint "Enter" 3 times)
 
+To Edit the login banner:
+- vi /etc/ssh/sshd_config
+  - Change the "#Banner none" line to "Banner /etc/issue"
+  - Save the file
+  - systemctl restart sshd
+- vi /etc/issue
+  - Paste whatever you want
+
 This one only needs to be done from the machine you will manage all of the others from
 
 To copy your ssh keys to the other hosts:
@@ -52,7 +60,10 @@ Encrypting passwords
 
 * Create vault.pass in the playbook directory with a password that will be used to encrypt and decrypt with ansible vault
 * Create a .gitignore file and place the name of the vault.pass file in it
-* Run "ansible-vault encrypt_string --vault-password-file pass.vault 'password_to_encrypt' --name 'root_password'"
+* vi /etc/ansible/ansible.cfg and change the "vault_password_file = /home/user/kubernetes/Kubernetes-Home-Lab/pass.vault" To match your vault.pass file path
+* mkpasswd --method=SHA-512 ( Copy this hashed password when you're done with this command) 
+* Run "ansible-vault encrypt_string 'hashed_password_to_encrypt' --name 'root_password'" ( The above command prevents you from using "--vault-password-file" in your command )
+
 
 Requirements
 ------------

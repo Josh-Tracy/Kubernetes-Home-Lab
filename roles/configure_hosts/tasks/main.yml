@@ -79,6 +79,7 @@
     name: "{{ kubernetes_admin }}"
     comment: Kubernetes Admin
     shell: /bin/bash
+    password: "{{ k8s_admin_password}}"
     groups: sudo
     append: yes
     create_home: yes
@@ -93,6 +94,33 @@
   user:
     name: ubuntu
     password_lock: yes
+  tags:
+    - manage_users
+
+# Change the login banner
+- name: Change the login banner
+  template:
+    src: issue.j2
+    dest: /etc/issue
+  tags:
+    - banner
+
+# Change SSH login banner path
+- name: Change Banner option in /etc/ssh/sshd_config
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '#Banner none'
+    replace: 'Banner /etc/issue'
+  tags:
+    - banner
+
+# Restart sshd service
+- name: Restsart sshd service
+  service:
+    name: sshd
+    state: restarted
+  tags:
+    - banner
 
   
     
