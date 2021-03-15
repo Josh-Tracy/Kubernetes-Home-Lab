@@ -3,7 +3,8 @@
 # Playbook that calls the created roles
 
 - name: call roles
-  hosts: all
+  hosts: 192.168.50.177
   become: true
   roles:
-    - configure_hosts
+    #- configure_hosts
+    - kubeadm_install
