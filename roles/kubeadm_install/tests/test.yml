@@ -2,4 +2,4 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - configure_hosts
+    - kubeadm_install
