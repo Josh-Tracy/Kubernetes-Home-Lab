@@ -51,12 +51,12 @@
 
 - name: Make sure br_netfilter module is loaded
   command: lsmod | grep overlay
-  register: netfilter_var
+  register: overlay_var
   ignore_errors: true
 
 - name: Load br_netfilter if it is not loaded
   command: /usr/sbin/modprobe overlay
-  when: netfilter_var.stdout == ""
+  when: overlay_var.stdout == ""
   ignore_errors: true
 
 - name: Place k8s.conf in modules-load.d
@@ -73,7 +73,7 @@
   command: /usr/sbin/sysctl --system
 
 #####################################
-## Install software              ####
+## INSTALL CONTAINERD            ####
 
 - name: Install required software to setup containerd install repo
   apt:
@@ -85,12 +85,19 @@
     - lsb-release
 
 - name: Add docker official gpg key
-  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg --yes
+
+- name: Remove /etc/apt/sources.list.d/docker.list
+  command: rm -rf /etc/apt/sources.list.d/docker.list
 
 - name: Setup Stable docker repository
-  shell: 'echo \
-  "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+  template:
+    src: docker.list.j2
+    dest: /etc/apt/sources.list.d/docker.list
+  
+ # shell: echo \
+ # "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+ # $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 - name: Apt-get update and Install containerd
   apt:
@@ -111,6 +118,44 @@
     name: containerd
     state: restarted
     enabled: yes
+
+- name: Place config.toml file
+  template:
+    src: config.toml.j2
+    dest: /etc/containerd/config.toml
+
+################################################
+### INSTALL KUBEADM, KUBELET, KUBECTL
+
+- name: Download the google cloud public signing GPG key
+  shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Setup kubernetes repository
+  template:
+    src: kubernetes.list.j2
+    dest: /etc/apt/sources.list.d/kubernetes.list
+
+- name: Apt-get update and Install kubectl on entire lab
+  apt:
+    pkg:
+    - kubectl
+    update_cache: yes 
+
+- name: Apt-get update and Install kubeadm on entire k8s cluster
+  apt:
+    pkg:
+    - kubeadm
+    update_cache: yes
+  when: "'masters' or 'workers' in group_names"
+
+- name: Apt-get update and Install kubelet on workers
+  apt:
+    pkg:
+    - kubelet
+    update_cache: yes
+  when: "'workers' in group_names"
+
+
 
 #- name: Install containerd container runtime, kubedadm, kublet, kubectl
 
