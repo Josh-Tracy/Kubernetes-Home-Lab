@@ -1,0 +1,13 @@
+# Define an upstream using the master nodes as the upstream nodes
+stream {
+    upstream kubernetes {
+        server 192.168.50.240:6443;
+        #server master02:6443;
+    }
+
+    server {
+        listen 6443;
+        listen 443;
+        proxy_pass kubernetes;
+    }
+}

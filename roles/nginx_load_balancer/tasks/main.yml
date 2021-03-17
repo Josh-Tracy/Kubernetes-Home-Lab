@@ -1,0 +1,41 @@
+---
+# tasks file for nginx_load_balancer
+
+# (Recommended) If you have plans to upgrade this single control-plane kubeadm cluster to high 
+# availability you should specify the --control-plane-endpoint to set 
+# the shared endpoint for all control-plane nodes.
+# Such an endpoint can be either a DNS name or an IP address of a load-balancer
+
+- name: Install nginx
+  apt:
+    pkg: nginx
+
+- name: Start and Enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+# Create a directory for extra nginx configs
+- name: Create /etc/nginx/tcpconf.d directory
+  file:
+    path: /etc/nginx/tcpconf.d
+    state: directory
+
+# Adding this line at the end of the file will ensure nginx loads configs in the tcpconf.d directory on startup
+- name: Add include statement to /etc/nginx/nginx.conf
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    line: "include /etc/nginx/tcpconf.d/*;"
+    state: present
+    backup: yes
+
+# This config will build an upstream telling the nginx load balancer what servers to load balance
+- name: Create /etc/nginx/tcpconf.d/kubernetes.conf
+  template:
+    src: kubernetes_conf.j2
+    dest: /etc/nginx/tcpconf.d/kubernetes.conf
+
+- name: Reload nginx
+  command: nginx -s reload
+
