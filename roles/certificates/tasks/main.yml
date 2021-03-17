@@ -432,11 +432,11 @@
     - kubedashboard
 
 # Create encryption-config
-- name: Generate encryption-config.yml
-  shell: echo "{{ encryption_config }}" > {{ CA_DIR }}/encryption-config.yml
-  args:
-    creates: '{{ CA_DIR }}/encryption-config.yml'
-  tags:
-    - certficates
-    - kubedashboard_cert
-    - kubedashboard
+#- name: Generate encryption-config.yml
+#  shell: echo "{{ encryption_config }}" > {{ CA_DIR }}/encryption-config.yml
+#  args:
+#    creates: '{{ CA_DIR }}/encryption-config.yml'
+#  tags:
+#    - certficates
+#    - kubedashboard_cert
+#    - kubedashboard
