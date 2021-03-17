@@ -332,6 +332,52 @@
     - kubecontroller
 
 ##########################################
+##     CREATE SERVICE ACCOUNT KEY PAIR  ##
+##########################################
+
+# This certificate is used to sign service account tokens
+
+# Create service-account key
+- name: Generating service-account private key
+  openssl_privatekey:
+    path: '{{ CA_DIR }}/service-account-key.pem'
+  tags:
+    - certficates
+    - serviceaccount_cert
+    - serviceaccount
+
+# Create service-account CSR
+- name: Generate service-account CSR
+  openssl_csr:
+    path: '{{ CA_DIR }}/service-account.csr'
+    privatekey_path: '{{ CA_DIR }}/service-account-key.pem'
+    basic_constraints: "CA:FALSE"
+    basic_constraints_critical: True
+    key_usage: digitalSignature, keyEncipherment
+    key_usage_critical: True
+    extended_key_usage: serverAuth, clientAuth
+    common_name: 'service-accounts'
+    organization_name: 'kubernetes'
+    organizational_unit_name: 'kubernetes'
+  tags:
+    - certficates
+    - serviceaccount_cert
+    - serviceaccount
+ 
+ # Create service-account cert
+- name: Generate service-account certificate
+  openssl_certificate:
+    path: '{{ CA_DIR }}/service-account.pem'
+    csr_path: '{{ CA_DIR }}/service-account.csr'
+    ownca_path: '{{ CA_DIR }}/ca.pem'
+    ownca_privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
+    provider: ownca
+  tags:
+    - certficates
+    - serviceaccount_cert
+    - serviceaccount
+
+##########################################
 ##     KUBE DASHBOARD CERTS             ##
 ##########################################
 
