@@ -12,11 +12,17 @@
   file:
     path: '{{ CA_DIR }}'
     state: directory
+  tags:
+    - certficates
+    - ca
 
 # Create the CA private key
 - name: Generate CA private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/ca-key.pem'
+  tags:
+    - certficates
+    - ca
 
 # Creates a CSR for the CA
 - name: Generate CA CSR
@@ -29,6 +35,9 @@
     key_usage_critical: True
     organizational_unit_name: kubernetes
     common_name: kubernetes
+  tags:
+    - certficates
+    - ca
 
 # Creare the CA cert from the CSR
 - name: Generate CA certificate
@@ -37,6 +46,9 @@
     privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     csr_path: '{{ CA_DIR }}/ca.csr'
     provider: selfsigned
+  tags:
+    - certficates
+    - ca
 
 ##########################################
 ##            KUBE ADMIN CERTS          ##
@@ -46,6 +58,9 @@
 - name: Generate Admin private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/admin-key.pem'
+  tags:
+    - certficates
+    - admin_cert
 
 # Create admin CSR
 - name: Generate Admin CSR
@@ -60,6 +75,9 @@
     common_name: k8sadmin
     organization_name: "system:masters"
     organizational_unit_name: kubernetes
+  tags:
+    - certficates
+    - admin_cert
 
 # Create Admin cert. Using the CSR created above and the ca.pem generated in the first tasks, 
 # can generate the certifiacte for the admin
@@ -70,6 +88,9 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - admin_cert
 
 
 ##########################################
@@ -80,6 +101,10 @@
 - name: Generate Masters private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/k8smasterkey.pem'
+  tags:
+    - certficates
+    - master_cert
+    - master
 
 # Localhost and 127.0.0.1 are added for k8s services on controller nodes to access local k8s API
 # kubernetes.default is added because it can be used from inside the cluster to access the API
@@ -98,6 +123,10 @@
     organization_name: 'system:masters'
     organizational_unit_name: 'kubernetes'
     subject_alt_name: "DNS:kubernetes.default, IP:{{ groups['masters'][0] }}, {{ k8smaster01_hostname }}, IP:{{ groups['load_balancers'][0] }}, {{ load_balancer_hostname }},  IP:127.0.0.1, localhost, IP:{{ APISERVER_SERVICE_IP }}"
+  tags:
+    - certficates
+    - master_cert
+    - master
 
 # Create master cert using master CSR and CA.pem
 - name: Generate Masters certificate
@@ -107,6 +136,10 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - master_cert
+    - master
 
 ##########################################
 ##            KUBELET CERTS             ##
@@ -120,6 +153,10 @@
     - {{ k8sworker01_hostname }}
     - {{ k8sworker02_hostname }}
     - {{ k8sworker03_hostname }}
+  tags:
+    - certficates
+    - worker_cert
+    - worker
 
 # Create worker CSRs
 - name: Generate Workers CSRs
@@ -139,6 +176,11 @@
     - ["{{ k8sworker01_hostname }}", "{{ groups['{{ k8sworker01_ip }}'][0] }}" ]
     - ["{{ k8sworker02_hostname }}", "{{ groups['{{ k8sworker02_ip }}'][1] }}" ]
     - ["{{ k8sworker03_hostname }}", "{{ groups['{{ k8sworker03_ip }}'][2] }}" ]
+  tags:
+    - certficates
+    - worker_cert
+    - worker
+  
 
 # Create worker Certs
 - name: Generate Workers certificates
@@ -152,6 +194,10 @@
     - {{ k8sworker01_hostname }}
     - {{ k8sworker02_hostname }}
     - {{ k8sworker03_hostname }}
+  tags:
+    - certficates
+    - worker_cert
+    - worker
 
 ##########################################
 ##            KUBEPROXY CERTS           ##
@@ -161,6 +207,10 @@
 - name: Generating Kube Proxy private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/kube-proxy-key.pem'
+  tags:
+    - certficates
+    - kubeproxy_cert
+    - kubeproxy
 
 # Create kubeproxy CSR
 - name: Generate Kube Proxy CSR
@@ -175,6 +225,10 @@
     common_name: 'system:kube-proxy'
     organization_name: 'system:node-proxier'
     organizational_unit_name: 'kubernetes'
+  tags:
+    - certficates
+    - kubeproxy_cert
+    - kubeproxy
  
  # Create kubeproxy cert
 - name: Generate Kube Proxy certificate
@@ -184,6 +238,10 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - kubeproxy_cert
+    - kubeproxy
 
 ##########################################
 ##         KUBE SCHEDULER CERTS         ##
@@ -193,6 +251,10 @@
 - name: Generating Kube scheduler private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/kube-scheduler-key.pem'
+  tags:
+    - certficates
+    - kubescheduler_cert
+    - kubescheduler
 
 # Create kube scheduler CSR
 - name: Generate Kube scheduler CSR
@@ -207,6 +269,10 @@
     common_name: 'system:kube-scheduler'
     organization_name: 'system:kube-scheduler'
     organizational_unit_name: 'kubernetes'
+  tags:
+    - certficates
+    - kubescheduler_cert
+    - kubescheduler
  
  # Create kube scheduler cert
 - name: Generate Kube Proxy certificate
@@ -216,6 +282,10 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - kubescheduler_cert
+    - kubescheduler
 
 ##########################################
 ##     KUBE CONTROLLER MANAGER CERTS    ##
@@ -225,6 +295,10 @@
 - name: Generating Kube controller-manager private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/kube-controller-manager-key.pem'
+  tags:
+    - certficates
+    - kubecontroller_cert
+    - kubecontroller
 
 # Create kube controller manager CSR
 - name: Generate Kube controller-manager CSR
@@ -239,6 +313,10 @@
     common_name: 'system:kube-controller-manager'
     organization_name: 'system:kube-controller-manager'
     organizational_unit_name: 'kubernetes'
+  tags:
+    - certficates
+    - kubecontroller_cert
+    - kubecontroller
  
  # Create kube controller manager cert
 - name: Generate Kube controller-manager certificate
@@ -248,6 +326,10 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - kubecontroller_cert
+    - kubecontroller
 
 ##########################################
 ##     KUBE DASHBOARD CERTS             ##
@@ -257,6 +339,10 @@
 - name: Generate k8s Dashboard private key
   openssl_privatekey:
     path: '{{ CA_DIR }}/k8s-dashboard-key.pem'
+  tags:
+    - certficates
+    - kubedashboard_cert
+    - kubedashboard
 
 # Create dashboard CSR
 - name: Generate k8s Dashboard CSR
@@ -271,6 +357,10 @@
     common_name: 'k8s-Dashboard'
     organization_name: 'addons:Dashboard'
     organizational_unit_name: 'kubernetes'
+  tags:
+    - certficates
+    - kubedashboard_cert
+    - kubedashboard
 
 # Create dashboard cert
 - name: Generate k8s Dashboard certificate
@@ -280,15 +370,27 @@
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     provider: ownca
+  tags:
+    - certficates
+    - kubedashboard_cert
+    - kubedashboard
 
 # Create cert bundle for dashboard
 - name: Generate k8s-dashboard bundle
   shell: "cat {{ CA_DIR }}/k8s-dashboard.pem {{ CA_DIR }}/k8s-dashboard-key.pem > {{ CA_DIR }}/k8s-dashboard.bundle"
   args:
     creates: '{{ CA_DIR }}/k8s-dashboard.bundle'
+  tags:
+    - certficates
+    - kubedashboard_cert
+    - kubedashboard
 
 # Create encryption-config
 - name: Generate encryption-config.yml
   shell: echo "{{ encryption_config }}" > {{ CA_DIR }}/encryption-config.yml
   args:
     creates: '{{ CA_DIR }}/encryption-config.yml'
+  tags:
+    - certficates
+    - kubedashboard_cert
+    - kubedashboard
