@@ -1,2 +1,18 @@
 ---
 # tasks file for bootstrap_cluster
+
+# Tasks for bootstrapping the cluster
+
+#Objectives
+#Install a single control-plane Kubernetes cluster
+#Install a Pod network on the cluster so that your Pods can talk to each other
+
+# Initializing your control-plane node ( MASTER )
+# (Recommended) If you have plans to upgrade this single control-plane kubeadm cluster to high 
+# availability you should specify the --control-plane-endpoint to set 
+# the shared endpoint for all control-plane nodes.
+# Such an endpoint can be either a DNS name or an IP address of a load-balancer
+
+# nginx LB IP = 192.168.50.117
+
+
