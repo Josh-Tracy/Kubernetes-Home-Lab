@@ -12,7 +12,7 @@ Role to configure day one bootstrapping of hosts including:
 
 Manual Commands to match this playbook
 -------------
-These assume you'r running sudo. The hostname, hosts file, and user will all need to be done on each machine you want them on. 
+These assume you're running sudo. The hostname, hosts file, and user will all need to be done on each machine you want them on. 
 
 To set a hostname: 
 - hostnamectl set-hostname

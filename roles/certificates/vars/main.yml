@@ -1,2 +1,28 @@
 ---
 # vars file for certificates
+
+# The directory on the CA host where all the keys, CSRs, and certificates will be stored
+CA_DIR: /root/k8scerts
+
+# Well known IP used internally by the k8s cluster
+APISERVER_SERVICE_IP: 10.32.0.1
+
+# The hostnames of the 3 worker nodes in the cluster
+k8sworker01_hostname: k8sworker01
+k8sworker02_hostname: k8sworker02
+k8sworker03_hostname: k8sworker03
+
+# The IP of the 3 worker nodes in the cluster
+k8sworker01_ip: 192.168.50.177
+k8sworker02_ip: 192.168.50.202
+k8sworker03_ip: 192.168.50.30
+
+# Load balancer hostname to add to the list of names for the controller/master cert
+load_balancer_hostname: k8sbalancer01
+load_balancer_ip: 192.168.50.117
+
+# Controller/master hostname to add to the list of names for the controller/master cert
+k8smaster01_hostname: k8smaster01
+k8smaster01_ip: 192.168.50.240
+#
+encryption_config
