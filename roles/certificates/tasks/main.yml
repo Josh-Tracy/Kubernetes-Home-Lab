@@ -25,13 +25,16 @@
     - ca
 
 # Creates a CSR for the CA
+# Any CA cert must have the keyCertSign usage option
 - name: Generate CA CSR
   openssl_csr:
     path: '{{ CA_DIR }}/ca.csr'
     privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     basic_constraints: 'CA:TRUE'
     basic_constraints_critical: True
-    key_usage: cRLSign, keyCertSign
+    key_usage: 
+      - cRLSign 
+      - keyCertSign
     key_usage_critical: True
     organizational_unit_name: kubernetes
     common_name: kubernetes
@@ -69,9 +72,13 @@
     privatekey_path: '{{ CA_DIR }}/admin-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage:
+      - serverAuth
+      - clientAuth
     common_name: k8sadmin
     organization_name: "system:masters"
     organizational_unit_name: kubernetes
@@ -117,9 +124,13 @@
     common_name: 'k8s-master'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage: 
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      - clientAuth
     organization_name: 'system:masters'
     organizational_unit_name: 'kubernetes'
     subject_alt_name: "DNS:kubernetes.default, IP:{{ groups['masters'][0] }}, {{ k8smaster01_hostname }}, IP:{{ groups['load_balancers'][0] }}, {{ load_balancer_hostname }},  IP:127.0.0.1, localhost, IP:{{ APISERVER_SERVICE_IP }}"
@@ -166,9 +177,13 @@
     common_name: 'system:node:{{ item[0] }}'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage:
+      - serverAuth
+      - clientAuth
     organization_name: 'system:nodes'
     organizational_unit_name: 'kubernetes'
     subject_alt_name: 'DNS:{{ item[0] }}, IP:{{ item[1] }}'
@@ -219,9 +234,13 @@
     privatekey_path: '{{ CA_DIR }}/kube-proxy-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      - clientAuth
     common_name: 'system:kube-proxy'
     organization_name: 'system:node-proxier'
     organizational_unit_name: 'kubernetes'
@@ -263,9 +282,13 @@
     privatekey_path: '{{ CA_DIR }}/kube-scheduler-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage: 
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      - clientAuth
     common_name: 'system:kube-scheduler'
     organization_name: 'system:kube-scheduler'
     organizational_unit_name: 'kubernetes'
@@ -307,9 +330,13 @@
     privatekey_path: '{{ CA_DIR }}/kube-controller-manager-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage: 
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      - clientAuth
     common_name: 'system:kube-controller-manager'
     organization_name: 'system:kube-controller-manager'
     organizational_unit_name: 'kubernetes'
@@ -353,9 +380,13 @@
     privatekey_path: '{{ CA_DIR }}/service-account-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage: 
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      - clientAuth
     common_name: 'service-accounts'
     organization_name: 'kubernetes'
     organizational_unit_name: 'kubernetes'
@@ -397,9 +428,13 @@
     privatekey_path: '{{ CA_DIR }}/k8s-dashboard-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
-    key_usage: digitalSignature, keyEncipherment
+    key_usage: 
+      - digitalSignature
+      - keyEncipherment
     key_usage_critical: True
-    extended_key_usage: serverAuth, clientAuth
+    extended_key_usage: 
+      - serverAuth
+      -  clientAuth
     common_name: 'k8s-Dashboard'
     organization_name: 'addons:Dashboard'
     organizational_unit_name: 'kubernetes'
