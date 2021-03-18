@@ -483,3 +483,32 @@
 #    - certficates
 #    - kubedashboard_cert
 #    - kubedashboard
+
+##########################################
+##     GATHER CERTS FOR DISTRIBUTION    ##
+##########################################
+##########################################
+##     WARNING: ADD THIS ROLES /FILES   ##
+##     DIRECTORY TO YOUR .GITIGNORE     ##
+##            OR EVERYONE WILL          ##
+#             HAVE YOUR CERTS           ##
+##########################################
+- name: Gather the cert files to be fetched
+  find:
+    paths: /root/k8scerts
+    recurse: no
+    patterns: "*"
+  register: files_to_copy
+  tags:
+    - certificates
+    - fetch
+
+- name: Fetch certs from CA and place them into this roles file directory
+  fetch:
+    src: "{{ item.path }}"
+    dest: roles/certificates/files/
+    flat: yes
+  with_items: "{{ files_to_copy.files }}"
+  tags:
+    - certificates
+    - fetch
