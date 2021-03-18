@@ -2,7 +2,15 @@
 # tasks file for certificates
 
 # Tasks to create a CA and Certificates for the Kubernetes cluster
-# The CA will be my NFS server host in this use case
+# The CA will be my NFS server host in this use case.
+
+# I did find that using the openssl_csr module, the key_usage options did not like a comma
+# seperated list, but the YAML list did work.
+
+# I got an error:
+# "Cannot parse Subject Alternative Name \" IP:192.168.50.240\" (potentially unsupported by cryptography backend)"
+# This was due to spaces between the comman sperated values in the subject_alt_name option in the openssl_csr module
+
 
 ##########################################
 ##              CREATE CA               ##
@@ -133,7 +141,7 @@
       - clientAuth
     organization_name: 'system:masters'
     organizational_unit_name: 'kubernetes'
-    subject_alt_name: "DNS:kubernetes.default, IP:{{ groups['masters'][0] }}, {{ k8smaster01_hostname }}, IP:{{ groups['load_balancers'][0] }}, {{ load_balancer_hostname }},  IP:127.0.0.1, localhost, IP:{{ APISERVER_SERVICE_IP }}"
+    subject_alt_name: "DNS:kubernetes.default,IP:{{ groups['masters'][0] }},DNS:{{ k8smaster01_hostname }},IP:{{ groups['load_balancers'][0] }},DNS:{{ load_balancer_hostname }},IP:127.0.0.1,DNS:localhost,IP:{{ APISERVER_SERVICE_IP }}"
   tags:
     - certficates
     - master_cert
@@ -143,7 +151,7 @@
 - name: Generate Masters certificate
   openssl_certificate:
     path: '{{ CA_DIR }}/k8s-master.pem'
-    csr_path: '{{ CA_DIR }}/k8s-master.csr'
+    csr_path: '{{ CA_DIR }}/k8smaster.csr'
     ownca_path: '{{ CA_DIR }}/ca.pem'
     ownca_privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     provider: ownca
@@ -188,9 +196,9 @@
     organizational_unit_name: 'kubernetes'
     subject_alt_name: 'DNS:{{ item[0] }}, IP:{{ item[1] }}'
   loop:
-    - ["{{ k8sworker01_hostname }}", "{{ groups['{{ k8sworker01_ip }}'][0] }}" ]
-    - ["{{ k8sworker02_hostname }}", "{{ groups['{{ k8sworker02_ip }}'][1] }}" ]
-    - ["{{ k8sworker03_hostname }}", "{{ groups['{{ k8sworker03_ip }}'][2] }}" ]
+    - ["{{ k8sworker01_hostname }}", "{{  k8sworker01_ip }}" ]
+    - ["{{ k8sworker02_hostname }}", "{{  k8sworker02_ip }}" ]
+    - ["{{ k8sworker03_hostname }}", "{{  k8sworker03_ip }}" ]
   tags:
     - certficates
     - worker_cert
