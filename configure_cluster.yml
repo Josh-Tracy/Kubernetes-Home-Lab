@@ -6,5 +6,7 @@
   hosts: all
   become: true
   roles:
-    #- configure_hosts
-    - kubeadm_install
+  #  - { role: configure_hosts }
+  #  - { role: kubeadm_install }
+    - { role: nginx_load_balancer , when: inventory_hostname == 192.168.50.117 }
+    - { role: certificates , when: inventory_hostname == 192.168.50.113 }

@@ -150,9 +150,9 @@
   openssl_privatekey:
     path: '{{ CA_DIR }}/{{ item }}-key.pem'
   loop: 
-    - {{ k8sworker01_hostname }}
-    - {{ k8sworker02_hostname }}
-    - {{ k8sworker03_hostname }}
+    - "{{ k8sworker01_hostname }}"
+    - "{{ k8sworker02_hostname }}"
+    - "{{ k8sworker03_hostname }}"
   tags:
     - certficates
     - worker_cert
@@ -191,9 +191,9 @@
     ownca_privatekey_path: '{{ CA_DIR }}/ca-key.pem'
     provider: ownca
   loop:
-    - {{ k8sworker01_hostname }}
-    - {{ k8sworker02_hostname }}
-    - {{ k8sworker03_hostname }}
+    - "{{ k8sworker01_hostname }}"
+    - "{{ k8sworker02_hostname }}"
+    - "{{ k8sworker03_hostname }}"
   tags:
     - certficates
     - worker_cert

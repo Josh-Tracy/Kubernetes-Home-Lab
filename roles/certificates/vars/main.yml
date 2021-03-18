@@ -25,4 +25,4 @@ load_balancer_ip: 192.168.50.117
 k8smaster01_hostname: k8smaster01
 k8smaster01_ip: 192.168.50.240
 #
-encryption_config
+#encryption_config
