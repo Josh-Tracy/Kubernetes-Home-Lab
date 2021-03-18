@@ -1,2 +1,2 @@
 pass.vault
-/home/user/kubernetes/Kubernetes-Home-Lab/roles/certificates/files/*
+/roles/certificates/files/*
