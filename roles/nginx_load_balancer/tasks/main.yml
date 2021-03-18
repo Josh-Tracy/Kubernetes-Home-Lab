@@ -9,18 +9,24 @@
 - name: Install nginx
   apt:
     pkg: nginx
+  tags:
+    - nginx
 
 - name: Start and Enable nginx
   service:
     name: nginx
     state: started
     enabled: yes
+  tags:
+    - nginx
 
 # Create a directory for extra nginx configs
 - name: Create /etc/nginx/tcpconf.d directory
   file:
     path: /etc/nginx/tcpconf.d
     state: directory
+  tags:
+    - nginx
 
 # Adding this line at the end of the file will ensure nginx loads configs in the tcpconf.d directory on startup
 - name: Add include statement to /etc/nginx/nginx.conf
@@ -29,13 +35,19 @@
     line: "include /etc/nginx/tcpconf.d/*;"
     state: present
     backup: yes
+  tags:
+    - nginx
 
 # This config will build an upstream telling the nginx load balancer what servers to load balance
 - name: Create /etc/nginx/tcpconf.d/kubernetes.conf
   template:
     src: kubernetes_conf.j2
     dest: /etc/nginx/tcpconf.d/kubernetes.conf
+  tags:
+    - nginx
 
 - name: Reload nginx
   command: nginx -s reload
+tags:
+    - nginx
 
