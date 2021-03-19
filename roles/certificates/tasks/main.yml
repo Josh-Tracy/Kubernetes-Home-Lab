@@ -23,6 +23,7 @@
   tags:
     - certficates
     - ca
+  when: inventory_hostname == groups['management'][0]
 
 # Create the CA private key
 - name: Generate CA private key
@@ -31,6 +32,7 @@
   tags:
     - certficates
     - ca
+  when: inventory_hostname == groups['management'][0]
 
 # Creates a CSR for the CA
 # Any CA cert must have the keyCertSign usage option
@@ -49,6 +51,7 @@
   tags:
     - certficates
     - ca
+  when: inventory_hostname == groups['management'][0]
 
 # Creare the CA cert from the CSR
 - name: Generate CA certificate
@@ -60,6 +63,7 @@
   tags:
     - certficates
     - ca
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##            KUBE ADMIN CERTS          ##
@@ -72,6 +76,7 @@
   tags:
     - certficates
     - admin_cert
+  when: inventory_hostname == groups['management'][0]
 
 # Create admin CSR
 - name: Generate Admin CSR
@@ -93,6 +98,7 @@
   tags:
     - certficates
     - admin_cert
+  when: inventory_hostname == groups['management'][0]
 
 # Create Admin cert. Using the CSR created above and the ca.pem generated in the first tasks, 
 # can generate the certifiacte for the admin
@@ -106,6 +112,7 @@
   tags:
     - certficates
     - admin_cert
+  when: inventory_hostname == groups['management'][0]
 
 
 ##########################################
@@ -120,6 +127,7 @@
     - certficates
     - master_cert
     - master
+  when: inventory_hostname == groups['management'][0]
 
 # Localhost and 127.0.0.1 are added for k8s services on controller nodes to access local k8s API
 # kubernetes.default is added because it can be used from inside the cluster to access the API
@@ -146,6 +154,7 @@
     - certficates
     - master_cert
     - master
+  when: inventory_hostname == groups['management'][0]
 
 # Create master cert using master CSR and CA.pem
 - name: Generate Masters certificate
@@ -159,6 +168,7 @@
     - certficates
     - master_cert
     - master
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##            KUBELET CERTS             ##
@@ -176,6 +186,7 @@
     - certficates
     - worker_cert
     - worker
+  when: inventory_hostname == groups['management'][0]
 
 # Create worker CSRs
 - name: Generate Workers CSRs
@@ -203,6 +214,7 @@
     - certficates
     - worker_cert
     - worker
+  when: inventory_hostname == groups['management'][0]
   
 
 # Create worker Certs
@@ -221,6 +233,7 @@
     - certficates
     - worker_cert
     - worker
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##            KUBEPROXY CERTS           ##
@@ -234,6 +247,7 @@
     - certficates
     - kubeproxy_cert
     - kubeproxy
+  when: inventory_hostname == groups['management'][0]
 
 # Create kubeproxy CSR
 - name: Generate Kube Proxy CSR
@@ -256,6 +270,7 @@
     - certficates
     - kubeproxy_cert
     - kubeproxy
+  when: inventory_hostname == groups['management'][0]
  
  # Create kubeproxy cert
 - name: Generate Kube Proxy certificate
@@ -269,6 +284,7 @@
     - certficates
     - kubeproxy_cert
     - kubeproxy
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##         KUBE SCHEDULER CERTS         ##
@@ -282,6 +298,7 @@
     - certficates
     - kubescheduler_cert
     - kubescheduler
+  when: inventory_hostname == groups['management'][0]
 
 # Create kube scheduler CSR
 - name: Generate Kube scheduler CSR
@@ -304,6 +321,7 @@
     - certficates
     - kubescheduler_cert
     - kubescheduler
+  when: inventory_hostname == groups['management'][0]
  
  # Create kube scheduler cert
 - name: Generate Kube Proxy certificate
@@ -317,6 +335,7 @@
     - certficates
     - kubescheduler_cert
     - kubescheduler
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##     KUBE CONTROLLER MANAGER CERTS    ##
@@ -330,6 +349,7 @@
     - certficates
     - kubecontroller_cert
     - kubecontroller
+  when: inventory_hostname == groups['management'][0]
 
 # Create kube controller manager CSR
 - name: Generate Kube controller-manager CSR
@@ -352,6 +372,7 @@
     - certficates
     - kubecontroller_cert
     - kubecontroller
+  when: inventory_hostname == groups['management'][0]
  
  # Create kube controller manager cert
 - name: Generate Kube controller-manager certificate
@@ -365,6 +386,7 @@
     - certficates
     - kubecontroller_cert
     - kubecontroller
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##     CREATE SERVICE ACCOUNT KEY PAIR  ##
@@ -380,6 +402,7 @@
     - certficates
     - serviceaccount_cert
     - serviceaccount
+  when: inventory_hostname == groups['management'][0]
 
 # Create service-account CSR
 - name: Generate service-account CSR
@@ -402,6 +425,7 @@
     - certficates
     - serviceaccount_cert
     - serviceaccount
+  when: inventory_hostname == groups['management'][0]
  
  # Create service-account cert
 - name: Generate service-account certificate
@@ -415,6 +439,7 @@
     - certficates
     - serviceaccount_cert
     - serviceaccount
+  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##     KUBE DASHBOARD CERTS             ##
@@ -428,6 +453,7 @@
     - certficates
     - kubedashboard_cert
     - kubedashboard
+  when: inventory_hostname == groups['management'][0]
 
 # Create dashboard CSR
 - name: Generate k8s Dashboard CSR
@@ -450,6 +476,7 @@
     - certficates
     - kubedashboard_cert
     - kubedashboard
+  when: inventory_hostname == groups['management'][0]
 
 # Create dashboard cert
 - name: Generate k8s Dashboard certificate
@@ -463,6 +490,7 @@
     - certficates
     - kubedashboard_cert
     - kubedashboard
+  when: inventory_hostname == groups['management'][0]
 
 # Create cert bundle for dashboard
 - name: Generate k8s-dashboard bundle
@@ -473,6 +501,7 @@
     - certficates
     - kubedashboard_cert
     - kubedashboard
+  when: inventory_hostname == groups['management'][0]
 
 # Create encryption-config
 #- name: Generate encryption-config.yml
@@ -483,6 +512,7 @@
 #    - certficates
 #    - kubedashboard_cert
 #    - kubedashboard
+#  when: inventory_hostname == groups['management'][0]
 
 ##########################################
 ##     GATHER CERTS FOR DISTRIBUTION    ##
@@ -502,6 +532,8 @@
   tags:
     - certificates
     - fetch
+    - distribute
+  when: inventory_hostname == groups['management'][0]
 
 - name: Fetch certs from CA and place them into this roles file directory
   fetch:
@@ -512,3 +544,60 @@
   tags:
     - certificates
     - fetch
+    - distribute
+  when: inventory_hostname == groups['management'][0]
+
+- name: Distribute worker01 certs
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/k8sadmin"
+  with_items:
+    - { src: ca.pem }
+    - { src: k8sworker01-key.pem }
+    - { src: k8sworker01.pem }
+  tags:
+    - certificates
+    - distribute
+  when: inventory_hostname == groups['workers'][0]
+
+- name: Distribute worker02 certs
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/k8sadmin"
+  with_items:
+    - { src: ca.pem }
+    - { src: k8sworker02-key.pem }
+    - { src: k8sworker02.pem }
+  tags:
+    - certificates
+    - distribute
+  when: inventory_hostname == groups['workers'][1]
+
+- name: Distribute worker03 certs
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/k8sadmin"
+  with_items:
+    - { src: ca.pem }
+    - { src: k8sworker03-key.pem }
+    - { src: k8sworker03.pem }
+  tags:
+    - certificates
+    - distribute
+  when: inventory_hostname == groups['workers'][2]
+
+- name: Distribute master01 certs
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/k8sadmin"
+  with_items:
+    - { src: ca.pem }
+    - { src: ca-key.pem }
+    - { src: k8smasterkey.pem }
+    - { src: k8s-master.pem }
+    - { src: service-account-key.pem }
+    - { src: service-account.pem }
+  tags:
+    - certificates
+    - distribute
+  when: inventory_hostname == groups['masters'][0]
