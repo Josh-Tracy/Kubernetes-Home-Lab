@@ -1,5 +1,7 @@
-Configure Hosts
+NGINX Load Balancer
 =========
+Documentation: https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/
+-------------
 Role to configure nginx load balancer:
 
 - Install, start, and enable nginx
