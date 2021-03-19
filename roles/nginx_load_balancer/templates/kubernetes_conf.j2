@@ -1,4 +1,10 @@
 # Define an upstream using the master nodes as the upstream nodes
+# Stream defines a top level stream block
+# Define each server and the port that server listens on for traffic
+# "upstream kubernetes" defines a server group
+# "proxy_pass" refers to the the "upstream <server group>", in this case "upstream kubernetes"
+# I have commented out master02, as I do not have that in my cluster yet
+
 stream {
     upstream kubernetes {
         server 192.168.50.240:6443;

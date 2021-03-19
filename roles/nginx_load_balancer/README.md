@@ -1,31 +1,44 @@
-Role Name
+Configure Hosts
 =========
+Role to configure nginx load balancer:
 
-A brief description of the role goes here.
+- Install, start, and enable nginx
+- Create config.d directory
+- Add extra config directory to main config
+- Create K8s master/control hosts load balancer config
+- reload nginx
+
+Manual Commands to match this playbook
+-------------
+These assume you're running sudo. 
+
+Install nginx:
+- apt-get install nginx
+
+Start and enable nginx:
+- systemctl start nginx
+- systemctl enable nginx
+
+Create /etc/nginx/tcpconf.d directory:
+- mkdir /etc/nginx/tcpconf.d
+
+Add include statement to /etc/nginx/nginx.conf:
+- echo "include /etc/nginx/tcpconf.d/*" >> /etc/nginx/nginx.conf
+
+Create /etc/nginx/tcpconf.d/kubernetes.conf:
+- vi /etc/nginx/tcpconf.d/kubernetes.conf
+- Take the file from the "templates" file in this role directory named "kubernetes_conf.j2" and paste it into /etc/nginx/tcpconf.d/kubernetes.conf
+- Hit ESC and type :wq to write and quit the file
+
+Reload nginx:
+- nginx -s reload
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- A Sudo user on your hosts you wish to apply this to
+- An internet connection or nginx and required dependencies
 
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
 
 License
 -------
