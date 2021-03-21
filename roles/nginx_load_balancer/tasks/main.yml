@@ -6,12 +6,14 @@
 # the shared endpoint for all control-plane nodes.
 # Such an endpoint can be either a DNS name or an IP address of a load-balancer
 
+# Install nginx
 - name: Install nginx
   apt:
     pkg: nginx
   tags:
     - nginx
 
+# Start and Enable nginx
 - name: Start and Enable nginx
   service:
     name: nginx
@@ -20,7 +22,7 @@
   tags:
     - nginx
 
-# Create a directory for extra nginx configs
+# Create a directory for extra nginx configs. This allows for easy management of configs
 - name: Create /etc/nginx/tcpconf.d directory
   file:
     path: /etc/nginx/tcpconf.d
@@ -48,6 +50,6 @@
 
 - name: Reload nginx
   command: nginx -s reload
-tags:
+  tags:
     - nginx
 

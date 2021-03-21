@@ -1,31 +1,54 @@
-Role Name
+Certificates
 =========
+##.GITIGNORE WARNING
 
-A brief description of the role goes here.
+##THIS ROLE WILL PUT ALL THE KEYS AND CERTS CREATED ONTO THE CONTROL NODE IN THE ROLES /FILES DIRECTORY. PLEASE AT THAT DIRECTORY TO YOUR .GITIGNORE SO YOU DO NOT UPLOAD YOUR KEYS AND CERTS TO GITHUB
+-------------
+Role to create certificates:
+
+- Create a CA
+- Create keys, certiciate signing requests, and certificates
+- Fetch files from the host you configured these on TO the Ansible control node
+- Distribute certificates based on requirmentes
+
+Manual Commands to match this playbook
+-------------
+These assume you're running sudo. 
+
+Install openssl:
+- apt-get install openssl
+
+Create the CA private key
+- openssl genrsa -out ca-key.pem 2048
+
+Create CA csr
+Creating openssl certs and CSR's requires configurations to be passed in for certain items like extensions. You can either create a .cfg file and pass it into the openssl command or specify the configuration as CONFIG= variable in the bash shell and then echo that variable. 
+- CONFIG="
+distinguished_name = my_req_distinguished_name
+req_extensions = my_extensions
+prompt = no
+[ my_req_distinguished_name ]
+C = US
+ST = State
+L = City
+O  = kubernetes
+CN = kubernetes
+[ my_extensions ]
+basicConstraints=critical,CA:TRUE
+keyUsage=critical, cRLSign, keyCertSign
+"
+- openssl req -config <(echo "$CONFIG") -new -key ca-key.pem -out ca.csr 
+
+
+
+
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- A Sudo user on your hosts you wish to apply this to
+- An internet connection or nginx and required dependencies
 
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
 
 License
 -------
