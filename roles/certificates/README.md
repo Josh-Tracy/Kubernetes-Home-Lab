@@ -23,7 +23,8 @@ Create the CA private key
 
 Create CA csr
 Creating openssl certs and CSR's requires configurations to be passed in for certain items like extensions. You can either create a .cfg file and pass it into the openssl command or specify the configuration as CONFIG= variable in the bash shell and then echo that variable. 
-- CONFIG="
+```
+CONFIG="
 distinguished_name = my_req_distinguished_name
 req_extensions = my_extensions
 prompt = no
@@ -37,6 +38,7 @@ CN = kubernetes
 basicConstraints=critical,CA:TRUE
 keyUsage=critical, cRLSign, keyCertSign
 "
+```
 - openssl req -config <(echo "$CONFIG") -new -key ca-key.pem -out ca.csr 
 
 
