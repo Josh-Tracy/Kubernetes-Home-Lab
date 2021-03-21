@@ -9,7 +9,7 @@ Link to the youtube series:
 - Part 2: https://www.youtube.com/watch?v=sDSuAPoM5iQ&t=505s
 - Part 3: https://www.youtube.com/watch?v=BvMEXcJe-bs
 - Part 3a: 
-- Part 4:
+- Part 4: https://www.youtube.com/watch?v=4W8cwgPJKrw&t=222s
 - Part 5:
 
 ## Architecure and Versions
