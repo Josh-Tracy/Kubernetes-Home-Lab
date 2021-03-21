@@ -81,7 +81,7 @@ Requirements
 ------------
 
 - A Sudo user on your hosts you wish to apply this to
-- An internet connection or nginx and required dependencies
+- An internet connection or openssl and required dependencies
 
 
 License
