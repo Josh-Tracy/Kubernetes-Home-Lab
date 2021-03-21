@@ -17,9 +17,10 @@ Link to the youtube series:
 - Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-1029-raspi aarch64)
 - Kubeadm, kubectl, kubelet v1.20.4
 - containerd .io v1.4.4
-- Weavenet ( k8s networking solution)
+- Flannel ( k8s networking solution)
+- Openssl v1.1.1f
 
 ## Networking
 -Cluster CIDR: IPs for pods - 10.100.0.0/16
 -Service Cluster CIDR: IPs for services - 10.32.0.0/24
--Worker Nodes Pod CIDR: Sepcific CIDR within the Cluster CIDR for one worker node. Multiple worker nodes pod CIDRs cannot overlap ( controlled by Weave Net )
+-Worker Nodes Pod CIDR: Sepcific CIDR within the Cluster CIDR for one worker node. Multiple worker nodes pod CIDRs cannot overlap ( controlled by Flannel )

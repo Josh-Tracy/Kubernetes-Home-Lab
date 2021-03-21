@@ -1,4 +1,4 @@
-Configure Hosts
+Kubeadm Install
 =========
 Role to configure prerequisites for installing a Kubeadm cluster
 
@@ -11,7 +11,7 @@ Role to configure prerequisites for installing a Kubeadm cluster
 
 Manual Commands to match this playbook
 -------------
-These assume you're running sudo. The hostname, hosts file, and user will all need to be done on each machine you want them on. 
+These assume you're running sudo.  
 
 To ensure the gpg keys and repos are removed:
 - rm -rf /etc/apt/sources.list.d/kubernetes.list
