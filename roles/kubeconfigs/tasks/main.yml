@@ -1,0 +1,98 @@
+---
+# tasks file for kubeconfigs
+
+# Creating the kubeconfig files
+# First I used kubectl to generate a .kubeconfig for each k8sworker node that included 3 parts:
+# - "kubectl config set-cluster" to define the cluster
+# - "kubectl config set-credentials" to define credentials with a username as the hostname
+# - "kubectl config set-context" to set a context in the file to then use
+# use "kubectl config set-context" to then set that context in the config
+
+# The templates in these modules were built with kubectl, and then pasted into templates
+# and the variables are placed in the vars directory for the role
+# Create kube configs for 3 worker nodes kubelet services
+- name: Distribute worker node kubeconfigs ( worker1 )
+  template:
+    src: "{{ item.src}}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: k8sworker01.kubeconfig.j2, dest: /home/k8sadmin/k8sworker01.kubeconfig  }
+    - { src: kube-proxy.kubeconfig.j2, dest: /home/k8sadmin/kube-proxy.kubeconfig }
+  when: inventory_hostname == '192.168.50.177'
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Distribute worker node kubeconfigs ( worker2 )
+  template:
+    src: "{{ item.src}}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: k8sworker02.kubeconfig.j2, dest: /home/k8sadmin/k8sworker02.kubeconfig }
+    - { src: kube-proxy.kubeconfig.j2, dest: /home/k8sadmin/kube-proxy.kubeconfig }
+  when: inventory_hostname == '192.168.50.202'
+  tags:
+    - kubeconfig
+    - worker 
+
+- name: Distribute worker node kubeconfigs ( worker 3)
+  template:
+    src: "{{ item.src}}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: k8sworker03.kubeconfig.j2, dest: /home/k8sadmin/k8sworker03.kubeconfig  }
+    - { src: kube-proxy.kubeconfig.j2, dest: /home/k8sadmin/kube-proxy.kubeconfig }
+  #when: inventory_hostname == groups['workers'][-1]
+  when: inventory_hostname == '192.168.50.30'
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Distribute control node configs ( master 1 )
+  template:
+    src: "{{ item.src}}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: admin.kubeconfig.j2, dest: /home/k8sadmin/admin.kubeconfig  }
+    - { src: kube-controller-manager.kubeconfig.j2, dest: /home/k8sadmin/kube-controller-manager.kubeconfig  }
+    - { src: kube-scheduler.kubeconfig.j2, dest: /home/k8sadmin/kube-scheduler.kubeconfig  }
+  when: inventory_hostname == '192.168.50.240'
+  tags:
+    - kubeconfig
+    - master
+
+- name: Ensure default context is set ( proxy )
+  shell: kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+  when: "'workers' in group_names"
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Ensure default context is set ( worker )
+  shell: kubectl config use-context default --kubeconfig={{ ansible_hostname }}.kubeconfig
+  when: "'workers' in group_names"
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Ensure default context is set ( admin )
+  shell: kubectl config use-context default --kubeconfig=admin.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+
+- name: Ensure default context is set ( controller )
+  shell: kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+
+- name: Ensure default context is set ( scheduler )
+  shell:  kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+  
