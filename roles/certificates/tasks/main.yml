@@ -252,8 +252,7 @@
 # Create kubeproxy CSR
 - name: Generate Kube Proxy CSR
   openssl_csr:
-    path: '{{ CA_DIR }}/kube-proxy.
-    csr'
+    path: '{{ CA_DIR }}/kube-proxy.csr'
     privatekey_path: '{{ CA_DIR }}/kube-proxy-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
@@ -325,7 +324,7 @@
   when: inventory_hostname == groups['management'][0]
  
  # Create kube scheduler cert
-- name: Generate Kube Proxy certificate
+- name: Generate Kube scheduler certificate
   openssl_certificate:
     path: '{{ CA_DIR }}/kube-scheduler.pem'
     csr_path: '{{ CA_DIR }}/kube-scheduler.csr'
@@ -556,11 +555,13 @@
     - { src: ca.pem }
     - { src: k8sworker01-key.pem }
     - { src: k8sworker01.pem }
+    - { src: kube-proxy.pem }
+    - { src: kube-proxy-key.pem}
   tags:
     - certificates
     - distribute
   #when: inventory_hostname == groups['workers'][0]
-  when: inventory_hostname == '192.168.50.177'
+  when: ansible_hostname == 'k8sworker01'
 
 - name: Distribute worker02 certs
   copy:
@@ -570,11 +571,13 @@
     - { src: ca.pem }
     - { src: k8sworker02-key.pem }
     - { src: k8sworker02.pem }
+    - { src: kube-proxy.pem }
+    - { src: kube-proxy-key.pem}
   tags:
     - certificates
     - distribute
   #when: inventory_hostname == groups['workers'][1]
-  when: inventory_hostname == '192.168.50.202'
+  when: ansible_hostname == 'k8sworker02'
 
 - name: Distribute worker03 certs
   copy:
@@ -584,11 +587,13 @@
     - { src: ca.pem }
     - { src: k8sworker03-key.pem }
     - { src: k8sworker03.pem }
+    - { src: kube-proxy.pem }
+    - { src: kube-proxy-key.pem}
   tags:
     - certificates
     - distribute
   #when: inventory_hostname == groups['workers'][2]
-  when: inventory_hostname == '192.168.50.30'
+  when: ansible_hostname == 'k8sworker03'
 
 - name: Distribute master01 certs
   copy:
@@ -601,6 +606,12 @@
     - { src: k8s-master.pem }
     - { src: service-account-key.pem }
     - { src: service-account.pem }
+    - { src: kube-controller-manager-key.pem }
+    - { src: kube-controller-manager.pem}
+    - { src: kube-scheduler-key.pem }
+    - { src: kube-scheduler.pem}
+    - { src: admin-key.pem }
+    - { src: admin.pem}
   tags:
     - certificates
     - distribute
