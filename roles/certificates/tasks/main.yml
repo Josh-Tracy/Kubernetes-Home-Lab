@@ -252,7 +252,8 @@
 # Create kubeproxy CSR
 - name: Generate Kube Proxy CSR
   openssl_csr:
-    path: '{{ CA_DIR }}/kube-proxy.csr'
+    path: '{{ CA_DIR }}/kube-proxy.
+    csr'
     privatekey_path: '{{ CA_DIR }}/kube-proxy-key.pem'
     basic_constraints: "CA:FALSE"
     basic_constraints_critical: True
@@ -558,7 +559,8 @@
   tags:
     - certificates
     - distribute
-  when: inventory_hostname == groups['workers'][0]
+  #when: inventory_hostname == groups['workers'][0]
+  when: inventory_hostname == '192.168.50.177'
 
 - name: Distribute worker02 certs
   copy:
@@ -571,7 +573,8 @@
   tags:
     - certificates
     - distribute
-  when: inventory_hostname == groups['workers'][1]
+  #when: inventory_hostname == groups['workers'][1]
+  when: inventory_hostname == '192.168.50.202'
 
 - name: Distribute worker03 certs
   copy:
@@ -584,7 +587,8 @@
   tags:
     - certificates
     - distribute
-  when: inventory_hostname == groups['workers'][2]
+  #when: inventory_hostname == groups['workers'][2]
+  when: inventory_hostname == '192.168.50.30'
 
 - name: Distribute master01 certs
   copy:

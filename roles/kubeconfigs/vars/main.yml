@@ -2,7 +2,7 @@
 # vars file for kubeconfigs
 
 # This should be the address of the load balancer that is reachable by clients
-kubernetes_address: https://192.168.50.117:6443
+load_balancer_address: https://192.168.50.117
 
 # IP addresses of worker nodes
 worker01: 192.168.50.177
