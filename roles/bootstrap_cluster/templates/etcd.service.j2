@@ -1,0 +1,29 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/etcd-io/etcd/releases/tag/v3.4.15
+
+[Service]
+Environment="ETCD_UNSUPPORTED_ARCH=arm64"
+ExecStart=/usr/local/bin/etcd \
+  --name {{ k8smaster01_hostname }} \
+  --cert-file=/etc/etcd/k8s-master.pem \
+  --key-file=/etc/etcd/k8smasterkey.pem \
+  --peer-cert-file=/etc/etcd/k8s-master.pem \
+  --peer-key-file=/etc/etcd/k8smasterkey.pem\
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://{{ k8smaster01_ip }}:2380 \
+  --listen-peer-urls https://{{ k8smaster01_ip }}:2380 \
+  --listen-client-urls https://{{ k8smaster01_ip }}:2379,https://127.0.0.1:2379 \
+  --advertise-client-urls https://{{ k8smaster01_ip }}:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster {{ cluster }} \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

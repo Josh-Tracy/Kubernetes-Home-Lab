@@ -15,4 +15,101 @@
 
 # nginx LB IP = 192.168.50.117
 
+################################################
+##      Download and configure ETCd           ##
+################################################
+# We must download the /etcd binaries and place them in the relvent directories 
+# and copy some certificates for etcd to use
+
+# Get etcd binaries:
+- name: Download etcd version
+  get_url:
+    url: https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-arm64.tar.gz
+    dest: /home/k8sadmin
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+  
+# Untar the binaries
+- name: Untar the binary
+  unarchive:
+    src: /home/k8sadmin/etcd-v3.4.15-linux-arm64.tar.gz
+    dest: /home/k8sadmin
+    remote_src: yes
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# Copy the etcd  binaries to /usr/local/bin path
+- name: Move etcd-v3.4.15-linux-amd64/etcd* contensts to /usr/local/bin
+  copy:
+    src: "{{ item.src }}"
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: '0755'
+  with_items:
+    - { src: /home/k8sadmin/etcd-v3.4.15-linux-arm64/etcd }
+    - { src: /home/k8sadmin/etcd-v3.4.15-linux-arm64/etcdctl }
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# Create extra directories for etcd
+- name: make /etc/etcd and /var/lib/etcd directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+  with_items:
+    - { path: /etc/etcd }
+    - { path: /var/lib/etcd }
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# Copy certs
+- name: Copy certifactes and keys to /etc/etcd
+  copy:
+    src: "{{ item.src }}"
+    dest: /etc/etcd
+    remote_src: yes
+  with_items:
+    - { src: /home/k8sadmin/ca.pem }
+    - { src: /home/k8sadmin/k8s-master.pem }
+    - { src: /home/k8sadmin/k8smasterkey.pem }
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# The following steps configure the etcd daemon for systemd to start on startup
+
+# Place a j2 template into /etc/systemd/system/etcd.service using variables
+- name: Create systemd etcd service
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# Daemon reload so systemd can use the new service
+- name: Daemon reload so systemd can use the new service
+  systemd:
+    daemon_reload: yes
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+# Start and enabled etcd service
+- name: Start and enable the etcd service
+  service:
+    name: etcd
+    state: started
+    enabled: yes
+  when: "'masters' in group_names"
+  tags:
+    - etcd
+
+################################################
+##      Configure control plane               ##
+################################################
 

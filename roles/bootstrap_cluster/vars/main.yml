@@ -1,2 +1,13 @@
 ---
 # vars file for bootstrap_cluster
+# IP addresses of masters
+k8smaster01_ip: 192.168.50.240
+#k8smaster02_ip: 192.168.50.202
+
+
+# Master Hostnames
+k8smaster01_hostname: k8smaster01
+#k8smaster02_hostname: k8smaster02
+
+
+cluster: k8smaster01=https://192.168.50.240:2380
