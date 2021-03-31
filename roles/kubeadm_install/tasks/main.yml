@@ -96,6 +96,12 @@
 - name: Apply sysctl changes
   command: /usr/sbin/sysctl --system
 
+# Add cgroups to cmdline
+- name: Add cgroups to cmdline
+  template:
+    src: cmdline.txt.j2
+    dest: /boot/firmware/cmdline.txt
+
 #####################################
 ##      INSTALL CONTAINERD       ####
 #####################################
