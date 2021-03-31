@@ -192,6 +192,6 @@
     pkg:
     - kubelet
     update_cache: yes
-  when: "'workers' in group_names"
+  when: "'workers' or 'masters' in group_names"
 
 
