@@ -113,3 +113,93 @@
 ##      Configure control plane               ##
 ################################################
 
+# Create a join token and hash of the ca and parse out token and hash into their respctive variables
+- shell: kubeadm token create --print-join-command
+    register: results
+  tags:
+    - kubeadm_init
+    - token
+
+- debug:
+    var: results.stdout
+  tags:
+    - kubeadm_init
+    - token
+
+- set_fact:
+    token: "{{ results.stdout | regex_search(regexp, '\\2') | first }}"
+  vars:
+    regexp: '([^\s]+\s){4}([^\s]+)'
+  tags:
+    - kubeadm_init
+    - token
+
+- debug:
+    var: token
+  tags:
+    - kubeadm_init
+    - token
+
+- set_fact:
+    hash: "{{ results.stdout | regex_search(regexp, '\\2') | first }}"
+  vars:
+    regexp: '([^\s]+\s){6}([^\s]+)'
+  tags:
+    - kubeadm_init
+    - token
+
+- debug:
+    var: hash
+  tags:
+    - kubeadm_init
+    - token
+
+- name: kubeadm init
+  shell: kubeadm init --config cluster.kubeconfig --token {{ token.stdout }}
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+- name: Create $HOME/.kube directory
+  file:
+    path: /home/k8sadmin/.kube
+    state: directory
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+- name: Copy admin config to k8sadmin
+  copy: 
+    src: /etc/kubernetes/admin.conf
+    dest: /home/k8sadmin/.kube/config
+    owner: k8sadmin
+    group: k8sadmin
+    remote_src: yes
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+# Apply pod network with Flannel
+- name: Apply flannel
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+# Join worker nodes
+- name: Join worker nodes to cluster
+  shell: |
+    kubeadm join 192.168.50.117:6443 \
+    --token {{ token.stdout }} \
+    --discovery-token-ca-cert-hash {{ hash.stdout }}
+  tags:
+    - kubeadm_init
+    
+# Join control nodes
+#- name: Join other control nodes to cluster
+#  shell: |
+#    kubeadm join 192.168.50.117:6443 \
+#    --token {{ token.stdout }} \
+#    --discovery-token-ca-cert-hash sha256:0ea3240343360022ebe06d56dc4d993ff9087c2a2910c7a238c95416596582f7 \
+#    --control-plane 
+
