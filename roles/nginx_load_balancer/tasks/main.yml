@@ -53,3 +53,13 @@
   tags:
     - nginx
 
+# Add firewall port for apiserver
+- name: Add firewall ports
+  firewalld:
+    port: "{{ item.port }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - { port: 6443/tcp }
+
+
