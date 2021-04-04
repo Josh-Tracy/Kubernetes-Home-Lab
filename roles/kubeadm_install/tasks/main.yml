@@ -19,7 +19,7 @@
 ###   Open Firewalld Ports  ###
 ###############################
 
-# Install Firewalld
+# Install Firewalld 
 - name: Install firewalld
   apt:
     pkg: firewalld
@@ -33,6 +33,7 @@
     state: enabled
   with_items:
     - { port: 6443/tcp }
+    - { port: 8080/tcp }
     - { port: 2379-2380/tcp }
     - { port: 10250-10252/tcp }
   when: "'masters' in group_names"
@@ -45,6 +46,7 @@
     state: enabled
   with_items:
     - { port: 10250/tcp }
+    - { port: 8080/tcp }
     - { port: 30000-32767/tcp }
   when: "'workers' in group_names"
 
@@ -101,6 +103,22 @@
   template:
     src: cmdline.txt.j2
     dest: /boot/firmware/cmdline.txt
+  register: task_result
+
+- name: Reboot immediately if there was a change.
+  shell: "sleep 5 && reboot"
+  async: 1
+  poll: 0
+  when: task_result is changed
+
+- name: Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: task_result is changed
+
 
 #####################################
 ##      INSTALL CONTAINERD       ####

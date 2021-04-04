@@ -118,58 +118,11 @@
   shell: kubeadm reset --force
   tags:
     - kubeadm_reset
+    - kubeadm_init
   when: "'workers' or 'masters' in group_names"
 
-# Create a join token and hash of the ca and parse out token and hash into their respctive variables
-- name: Create token and hash ans parse them out
-  shell: kubeadm token create --print-join-command
-    register: results
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
-- debug:
-    var: results.stdout
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
-- set_fact:
-    token: "{{ results.stdout | regex_search(regexp, '\\2') | first }}"
-  vars:
-    regexp: '([^\s]+\s){4}([^\s]+)' 
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
-- debug:
-    var: token
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
-- set_fact:
-    hash: "{{ results.stdout | regex_search(regexp, '\\2') | first }}"
-  vars:
-    regexp: '([^\s]+\s){6}([^\s]+)'
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
-- debug:
-    var: hash
-  when: "'masters' in group_names"
-  tags:
-    - kubeadm_init
-    - token
-
 - name: kubeadm init
-  shell: kubeadm init --config cluster.kubeconfig --token {{ token.stdout }}
+  shell: kubeadm init --config /home/k8sadmin/cluster.kubeconfig
   when: "'masters' in group_names"
   tags:
     - kubeadm_init
@@ -178,7 +131,7 @@
   file:
     path: /home/k8sadmin/.kube
     state: directory
-  when: "'masters' in group_names"
+  when: "'masters' or 'workers' in group_names"
   tags:
     - kubeadm_init
 
@@ -193,6 +146,96 @@
   tags:
     - kubeadm_init
 
+- name: Gather admin.conf
+  find:
+    paths: /home/k8sadmin/.kube/
+    recurse: no
+    patterns: "config"
+  register: files_to_copy
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+- name: Fetch admin.conf to ansible controller
+  fetch:
+    src: "{{ item.path }}"
+    dest: roles/bootstrap_cluster/files/
+    flat: yes
+  with_items: "{{ files_to_copy.files }}"
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
+- name: Distribute admin.conf to workers
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/k8sadmin/.kube/config"
+    owner: k8sadmin
+    group: k8sadmin
+  with_items:
+    - { src: config }
+  when: "'workers' in group_names"
+  tags:
+    - kubeadm_init
+
+# Create a join token and hash of the ca and parse out token and hash into their respctive variables
+- name: Create token and hash ans parse them out
+  shell: kubeadm token create --print-join-command > join.txt
+  #register: results
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Parse join file for token and create token variable
+  shell: "cat join.txt | awk '{ print $5 }'"
+  register: token
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Create token var
+  set_fact:
+    token: "{{ token.stdout }}"
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Output token variable
+  debug:
+    var: token
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Parse join file for hash and create hash variable
+  shell: "cat join.txt | awk '{ print $7 }'"
+  register: hash
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Create token var
+  set_fact:
+    hash: "{{ hash.stdout }}"
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+- name: Output hash variable
+  debug:
+    var: hash
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+    - token
+
+
 # Apply pod network with Flannel
 - name: Apply flannel
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
@@ -204,8 +247,9 @@
 - name: Join worker nodes to cluster
   shell: |
     kubeadm join 192.168.50.117:6443 \
-    --token {{ token.stdout }} \
-    --discovery-token-ca-cert-hash {{ hash.stdout }}
+    --token {{ token }} \
+    --discovery-token-ca-cert-hash {{ hash }}
+  when: "'workers' in group_names"
   tags:
     - kubeadm_init
     
