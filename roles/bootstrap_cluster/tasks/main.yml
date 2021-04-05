@@ -129,8 +129,11 @@
 
 - name: Create $HOME/.kube directory
   file:
-    path: /home/k8sadmin/.kube
+    path: "{{ item }}"
     state: directory
+  loop:
+    - /home/k8sadmin/.kube
+    - /root/.kube
   when: "'masters' or 'workers' in group_names"
   tags:
     - kubeadm_init
@@ -138,10 +141,13 @@
 - name: Copy admin config to k8sadmin
   copy: 
     src: /etc/kubernetes/admin.conf
-    dest: /home/k8sadmin/.kube/config
+    dest: "{{ item }}"
     owner: k8sadmin
     group: k8sadmin
     remote_src: yes
+  loop:
+    - /home/k8sadmin/.kube/config
+    - /root/.kube/config
   when: "'masters' in group_names"
   tags:
     - kubeadm_init
@@ -235,6 +241,13 @@
     - kubeadm_init
     - token
 
+- name: add token and hash to dummy host to pass facts between hosts
+  add_host:
+    name: "192.168.50.240"
+    token: "{{ token }}"
+    hash: "{{ hash }}"
+  tags:
+    - kubeadm_init
 
 # Apply pod network with Flannel
 - name: Apply flannel
@@ -247,8 +260,8 @@
 - name: Join worker nodes to cluster
   shell: |
     kubeadm join 192.168.50.117:6443 \
-    --token {{ token }} \
-    --discovery-token-ca-cert-hash {{ hash }}
+    --token "{{ hostvars['192.168.50.240']['token'] }}" \
+    --discovery-token-ca-cert-hash "{{ hostvars['192.168.50.240']['hash'] }}"
   when: "'workers' in group_names"
   tags:
     - kubeadm_init
