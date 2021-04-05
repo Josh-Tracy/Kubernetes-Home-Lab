@@ -110,7 +110,7 @@
     - etcd
 
 ################################################
-##      Configure control plane               ##
+##      Configure control plane  and workers  ##
 ################################################
 
 # Reset kubeadm
@@ -120,6 +120,18 @@
     - kubeadm_reset
     - kubeadm_init
   when: "'workers' or 'masters' in group_names"
+
+#- name: Delete nodes
+#  shell: kubectl delete node "{{ item }}"
+#  loop:
+#    - k8sworker01
+#    - k8sworker02
+#    - k8sworker03
+#    - k8smaster01
+#  when: "'masters' in group_names"
+#  tags:
+#    - delete_nodes
+  
 
 - name: kubeadm init
   shell: kubeadm init --config /home/k8sadmin/cluster.kubeconfig
@@ -257,6 +269,7 @@
     - kubeadm_init
 
 # Join worker nodes
+
 - name: Join worker nodes to cluster
   shell: |
     kubeadm join 192.168.50.117:6443 \
@@ -265,6 +278,7 @@
   when: "'workers' in group_names"
   tags:
     - kubeadm_init
+    - join
     
 # Join control nodes
 #- name: Join other control nodes to cluster
