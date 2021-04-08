@@ -26,3 +26,12 @@ Link to the youtube series:
 ## Networking
 -Cluster CIDR: IPs for pods - 10.240.0.0/16
 -Worker Nodes Pod CIDR: Sepcific CIDR within the Cluster CIDR for one worker node. Multiple worker nodes pod CIDRs cannot overlap ( controlled by Flannel )
+
+## Known Issues
+
+###### Issue:
+- Kubernetes-dashboard pods stuck in creating
+###### Error:
+- Warning  FailedCreatePodSandBox  13s (x6 over 79s)  kubelet            (combined from similar events): Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox "1cce51808f870550bc01b3a8899e1fa13cad6372fa465a8e4c459a18ec8c51ea": failed to set bridge addr: "cni0" already has an IP address different from 10.240.1.1/24
+###### Fix:
+- This happens when you destroy flannel and deploy it again sometimes. Go to the nodes the kubernetes-dashboard hosts are hosted on and run `sudo ip link set cni0 down` and then `sudo brctl delbr cni0` and wait a few minutes. 
