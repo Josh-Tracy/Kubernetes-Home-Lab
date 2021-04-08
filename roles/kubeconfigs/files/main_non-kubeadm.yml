@@ -1,0 +1,229 @@
+---
+# tasks file for kubeconfigs
+
+# Creating the kubeconfig files
+# First I used kubectl to generate a .kubeconfig for each k8sworker node that included 3 parts:
+# - "kubectl config set-cluster" to define the cluster
+# - "kubectl config set-credentials" to define credentials with a username as the hostname
+# - "kubectl config set-context" to set a context in the file to then use
+# use "kubectl config set-context" to then set that context in the config
+
+# Each kubeconfig is created on the appropriate host at the time kubectl 
+# command is run. Therefor, you must have distributed the required key and certs
+# to the nodes before running this role.
+
+# worker node configs
+- name: Create worker kubeconfigs ( k8sworker01 )
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server={{load_balancer_address}}:6443 \
+    --kubeconfig={{ worker01_hostname }}.kubeconfig
+
+    kubectl config set-credentials system:node:{{ worker01_hostname }} \
+    --client-certificate={{ worker01_hostname }}.pem \
+    --client-key={{ worker01_hostname }}-key.pem \
+    --embed-certs=true \
+    --kubeconfig={{ worker01_hostname }}.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:node:{{ worker01_hostname }} \
+    --kubeconfig={{ worker01_hostname }}.kubeconfig
+  when: ansible_hostname == "k8sworker01"
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Create worker kubeconfigs ( k8sworker02 )
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server={{load_balancer_address}}:6443 \
+    --kubeconfig={{ worker02_hostname }}.kubeconfig
+
+    kubectl config set-credentials system:node:{{ worker02_hostname }} \
+    --client-certificate={{ worker02_hostname }}.pem \
+    --client-key={{ worker02_hostname }}-key.pem \
+    --embed-certs=true \
+    --kubeconfig={{ worker02_hostname }}.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:node:{{ worker02_hostname }} \
+    --kubeconfig={{ worker02_hostname }}.kubeconfig
+  when: ansible_hostname == "k8sworker02"
+  tags:
+    - kubeconfig
+    - worker
+
+- name: Create worker kubeconfigs ( k8sworker03 )
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server={{load_balancer_address}}:6443 \
+    --kubeconfig={{ worker03_hostname }}.kubeconfig
+
+    kubectl config set-credentials system:node:{{ worker03_hostname }} \
+    --client-certificate={{ worker03_hostname }}.pem \
+    --client-key={{ worker03_hostname }}-key.pem \
+    --embed-certs=true \
+    --kubeconfig={{ worker03_hostname }}.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:node:{{ worker03_hostname }} \
+    --kubeconfig={{ worker03_hostname }}.kubeconfig
+  when: ansible_hostname == "k8sworker03"
+  tags:
+    - kubeconfig
+    - worker
+
+# Kubeproxy config
+- name: Create Kubeproxy config
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server={{load_balancer_address}}:6443 \
+    --kubeconfig=kube-proxy.kubeconfig
+
+    kubectl config set-credentials system:kube-proxy \
+    --client-certificate=kube-proxy.pem \
+    --client-key=kube-proxy-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-proxy.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:kube-proxy \
+    --kubeconfig=kube-proxy.kubeconfig
+  when: "'workers' in group_names"
+  tags:
+    - kubeconfig
+    - kubeproxy
+    - worker
+
+# Controller manager config
+- name: Create controller manager config
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=kube-controller-manager.kubeconfig
+
+    kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=kube-controller-manager.pem \
+    --client-key=kube-controller-manager-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-controller-manager.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:kube-controller-manager \
+    --kubeconfig=kube-controller-manager.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - controller
+    - master
+
+# Scheduler config
+- name: Create scheduler config
+  shell: |
+    kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=kube-scheduler.kubeconfig
+
+    kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=kube-scheduler.pem \
+    --client-key=kube-scheduler-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-scheduler.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=system:kube-scheduler \
+    --kubeconfig=kube-scheduler.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - scheduler
+    - master
+
+# admin config
+- name: Create sadmin config
+  shell: |
+    kubectl config set-cluster kubernetes\
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=admin.kubeconfig
+
+    kubectl config set-credentials admin \
+    --client-certificate=admin.pem \
+    --client-key=admin-key.pem \
+    --embed-certs=true \
+    --kubeconfig=admin.kubeconfig
+
+    kubectl config set-context default \
+    --cluster=kubernetes \
+    --user=admin \
+    --kubeconfig=admin.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - admin
+    - master
+    
+
+- name: Ensure default context is set ( proxy )
+  shell: kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+  when: "'workers' in group_names"
+  tags:
+    - kubeconfig
+    - worker
+    - proxy
+    - setcontext
+
+- name: Ensure default context is set ( worker )
+  shell: kubectl config use-context default --kubeconfig={{ ansible_hostname }}.kubeconfig
+  when: "'workers' in group_names"
+  tags:
+    - kubeconfig
+    - worker
+    - setcontext
+
+- name: Ensure default context is set ( admin )
+  shell: kubectl config use-context default --kubeconfig=admin.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+    - admin
+    - setcontext
+
+- name: Ensure default context is set ( controller )
+  shell: kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+    - controller
+    - setcontext
+
+- name: Ensure default context is set ( scheduler )
+  shell:  kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeconfig
+    - master
+    - scheduler
+    - setcontext
+  
