@@ -23,7 +23,8 @@
 
 # Get etcd binaries:
 
-- name: Disable firewalld test
+# It was discovered that by having firewalld enabled when launching flannel pods, the cluster did not start properly 
+- name: Disable firewalld
   service:
     name: firewalld
     state: stopped
@@ -31,8 +32,14 @@
     - kubeadm_reset
     - kubeadm_init
 
-- name: remove manfiests
-  shell: rm -rf /etc/kubernetes/manifests && rm -rf /var/lib/etcd
+# when the above issue is encountred it is neccessary to remove these files
+- name: Clean up cluster manifests
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/kubernetes/manifests
+    - /var/lib/etcd
   tags:
     - kubeadm_reset
     - kubeadm_init
