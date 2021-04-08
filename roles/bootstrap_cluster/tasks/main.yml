@@ -22,6 +22,21 @@
 # and copy some certificates for etcd to use
 
 # Get etcd binaries:
+
+- name: Disable firewalld test
+  service:
+    name: firewalld
+    state: stopped
+  tags:
+    - kubeadm_reset
+    - kubeadm_init
+
+- name: remove manfiests
+  shell: rm -rf /etc/kubernetes/manifests && rm -rf /var/lib/etcd
+  tags:
+    - kubeadm_reset
+    - kubeadm_init
+
 - name: Download etcd version
   get_url:
     url: https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-arm64.tar.gz
@@ -135,7 +150,6 @@
   
 
 - name: kubeadm init
-#  shell: kubeadm init --pod-network-cidr=10.240.0.0/16
   shell: kubeadm init --config /home/k8sadmin/cluster.kubeconfig
   when: "'masters' in group_names"
   tags:
