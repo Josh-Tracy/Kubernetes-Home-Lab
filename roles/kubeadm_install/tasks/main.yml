@@ -26,6 +26,9 @@
       - firewalld
       - netfilter-persistent
     state: present
+  tags:
+    - firewalld
+    - iptables
 
 # Open Required Master Ports
 - name: open ports ( MASTERS )
