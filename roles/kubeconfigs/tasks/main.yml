@@ -7,5 +7,7 @@
     dest: /home/k8sadmin/.kube/cluster.kubeconfig
     owner: k8sadmin
     group: k8sadmin
+  when: "'masters' in group_names"
   tags:
     - kubeconfig
+

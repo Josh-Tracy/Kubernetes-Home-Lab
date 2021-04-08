@@ -11,7 +11,9 @@ Requirements
 Description
 --------------
 
-The cluster.kubeconfig.j2 file will be placed into the $HOME/.kube directory on each worker and master node and used with the kubeadm init --config option to initialize the cluster.
+The cluster.kubeconfig.j2 file will be placed into the $HOME/.kube directory on master node and used with the kubeadm init --config option to initialize the cluster.
+
+- There is a file under this roles files directory for more complext creation of kubeconfigs. 
 
 Role Variables
 --------------
