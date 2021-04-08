@@ -61,5 +61,9 @@
     state: enabled
   with_items:
     - { port: 6443/tcp }
+    - { port: 8472/tcp }
+    - { port: 8080/tcp }
+  tags:
+    - firewalld
 
 

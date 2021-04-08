@@ -131,9 +131,11 @@
 #  when: "'masters' in group_names"
 #  tags:
 #    - delete_nodes
+#    - kubeadm_init
   
 
 - name: kubeadm init
+#  shell: kubeadm init --pod-network-cidr=10.240.0.0/16
   shell: kubeadm init --config /home/k8sadmin/cluster.kubeconfig
   when: "'masters' in group_names"
   tags:
@@ -287,4 +289,6 @@
 #    --token {{ token.stdout }} \
 #    --discovery-token-ca-cert-hash sha256:0ea3240343360022ebe06d56dc4d993ff9087c2a2910c7a238c95416596582f7 \
 #    --control-plane 
+
+#kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
 

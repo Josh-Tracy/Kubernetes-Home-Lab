@@ -19,10 +19,12 @@
 ###   Open Firewalld Ports  ###
 ###############################
 
-# Install Firewalld 
+# Install Firewalld and netfilter-persistent
 - name: Install firewalld
   apt:
-    pkg: firewalld
+    pkg: 
+      - firewalld
+      - netfilter-persistent
     state: present
 
 # Open Required Master Ports
@@ -33,10 +35,14 @@
     state: enabled
   with_items:
     - { port: 6443/tcp }
+    - { port: 8285/udp }
+    - { port: 8472/tcp }
     - { port: 8080/tcp }
     - { port: 2379-2380/tcp }
     - { port: 10250-10252/tcp }
   when: "'masters' in group_names"
+  tags:
+    - firewalld
 
 # Opern Required Worker Ports
 - name: open ports ( WORKERS )
@@ -46,9 +52,13 @@
     state: enabled
   with_items:
     - { port: 10250/tcp }
+    - { port: 8285/udp }
+    - { port: 8472/tcp }
     - { port: 8080/tcp }
     - { port: 30000-32767/tcp }
   when: "'workers' in group_names"
+  tags:
+    - firewalld
 
 # Turn on and Enable Firewalld
 - name: Turn on and enable firewalld
@@ -56,6 +66,25 @@
     name: firewalld
     state: restarted
     enabled: yes
+  tags:
+    - firewalld
+
+# Make it so iptables is configured to allow flannel and coredns pods to start and add iptables rules
+- name: iptables default policies need to be ACCEPT on all chains
+  iptables:
+    chain: '{{item}}'
+    policy: ACCEPT
+  with_items:
+  - INPUT
+  - FORWARD
+  - OUTPUT
+  tags:
+    - iptables
+
+- name: save iptables rules (Debian)
+  shell: netfilter-persistent save
+  tags:
+    - iptables
 
 #############################
 ###     Disable SWAP      ###
