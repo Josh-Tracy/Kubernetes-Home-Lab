@@ -20,7 +20,7 @@
 ###############################
 
 # Install Firewalld and netfilter-persistent
-- name: Install firewalld
+- name: Install firewalld and ( netfilter-persistent Debian only )
   apt:
     pkg: 
       - firewalld
