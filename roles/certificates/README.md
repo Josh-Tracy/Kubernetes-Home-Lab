@@ -4,6 +4,11 @@ Certificates
 
 ##THIS ROLE WILL PUT ALL THE KEYS AND CERTS CREATED ONTO THE CONTROL NODE IN THE ROLES /FILES DIRECTORY. PLEASE AT THAT DIRECTORY TO YOUR .GITIGNORE SO YOU DO NOT UPLOAD YOUR KEYS AND CERTS TO GITHUB
 -------------
+Useful links:
+
+- [Adding your own CA trusted to firefox](https://javorszky.co.uk/2019/11/06/get-firefox-to-trust-your-self-signed-certificates/)
+- [Adding your own CA to Debian host](https://unix.stackexchange.com/questions/90450/adding-a-self-signed-certificate-to-the-trusted-list)
+-------------
 Documentation
 
 How to apply OpenSSL extensions:
