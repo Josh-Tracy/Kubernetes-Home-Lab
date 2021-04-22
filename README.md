@@ -11,7 +11,7 @@ Link to the youtube series:
 - Part 3a: [My Thought Process When Building Palybooks](https://www.youtube.com/watch?v=gO8OMoW5VLo&t=2027s)
 - Part 4: [Deploying an NGINX Load Balancer with Ansible](https://www.youtube.com/watch?v=4W8cwgPJKrw&t=222s)
 - Part 5: [Creating Encryption Secrets for Kubernetes Cluster with Ansible](https://www.youtube.com/watch?v=DkkJviaWklY&t=162s)
-- Part 6:
+- Part 6: [Creating a CA and certificates for Kubernetes Cluster with Ansible](https://www.youtube.com/watch?v=l-gOIylwsWo)
 - Part 7: 
 
 

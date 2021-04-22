@@ -14,7 +14,7 @@ This role does the following:
 
 Requirements
 ------------
-
+- Variables: Edit the variables for the etcd template in the vars directory 
 - The ability to connect to the internet or a flannel.yaml file availble on an air gapped network
 - An account with sudoer privileges
 

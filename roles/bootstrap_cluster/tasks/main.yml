@@ -365,8 +365,10 @@
 
 - name: Sleep for 1 minute to give pods time to come up
   wait_for:
-    timeout: 300
+    timeout: 60
   delegate_to: localhost
+  tags:
+    - kubeadm_init
 
 - name: Restart containerd incase cni0 didnt get created
   service:
