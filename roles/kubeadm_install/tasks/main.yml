@@ -34,6 +34,7 @@
 - name: open ports ( MASTERS )
   firewalld:
     port: "{{ item.port }}"
+    
     permanent: yes
     state: enabled
   with_items:
@@ -160,6 +161,7 @@
 - name: Install required software to setup containerd install repo
   apt:
     pkg:
+    - bridge-utils
     - apt-transport-https
     - ca-certificates
     - curl

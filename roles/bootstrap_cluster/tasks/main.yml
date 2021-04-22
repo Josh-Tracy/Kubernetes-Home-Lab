@@ -32,14 +32,6 @@
 #    - kubeadm_reset
 #    - kubeadm_init
 
-- name: bridge utils
-  apt:
-    pkg: 
-      - bridge-utils
-    state: present
-  tags:
-    - kubeadm_init
-
  #Delete nodes
 - name: Delete nodes
   shell: kubectl delete nodes --all
@@ -77,7 +69,7 @@
     - kubeadm_init
 
 # when the above issue is encountred it is neccessary to remove these files
-- name: Clean up cluster manifests and etcd and cni
+- name: Clean up cluster and etcd and cni
   file:
     path: "{{ item }}"
     state: absent
