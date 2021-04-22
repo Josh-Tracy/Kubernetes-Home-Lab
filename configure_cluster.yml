@@ -8,11 +8,11 @@
   hosts: all
   become: true
   roles:
-  #  - { role: configure_hosts }
+    - { role: configure_hosts }
     - { role: kubeadm_install }
     - { role: nginx_load_balancer , when: inventory_hostname == "192.168.50.117" }
-  #  - { role: certificates }
-    - { role: kubeconfigs }
+    - { role: certificates }
+   # - { role: kubeconfigs }
     - { role: secrets }
     - { role: bootstrap_cluster }
 

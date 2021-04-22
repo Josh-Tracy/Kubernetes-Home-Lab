@@ -23,7 +23,7 @@
 
 # Get etcd binaries:
 
-# It was discovered that by having firewalld enabled when launching flannel pods, the cluster did not start properly 
+ #It was discovered that by having firewalld enabled when launching flannel pods, the cluster did not start properly 
 - name: Disable firewalld
   service:
     name: firewalld
@@ -32,18 +32,66 @@
     - kubeadm_reset
     - kubeadm_init
 
+- name: bridge utils
+  apt:
+    pkg: 
+      - bridge-utils
+    state: present
+  tags:
+    - kubeadm_init
+
+ #Delete nodes
+- name: Delete nodes
+  shell: kubectl delete nodes --all
+  when: "'masters' in group_names"
+  ignore_errors: true
+  tags:
+    - delete_nodes
+    - kubeadm_init
+
+# Remove old iptables rules and cni interface
+- name: Remove old iptables rules and delete cni interface
+  shell: "{{ item }}"
+  loop:
+    - iptables -F
+    - iptables -t nat -F
+    - iptables -t mangle -F
+    - iptables -X
+    - ip link set cni0 down
+    - sudo brctl delbr cni0
+  ignore_errors: true
+  tags:
+    - delete_nodes
+    - kubeadm_init
+
+# Make it so iptables is configured to allow flannel and coredns pods to start and add iptables rules
+- name: iptables default policies need to be ACCEPT on all chains
+  iptables:
+    chain: '{{item}}'
+    policy: ACCEPT
+  with_items:
+  - INPUT
+  - FORWARD
+  - OUTPUT
+  tags:
+    - kubeadm_init
+
 # when the above issue is encountred it is neccessary to remove these files
-- name: Clean up cluster manifests
+- name: Clean up cluster manifests and etcd and cni
   file:
     path: "{{ item }}"
     state: absent
   loop:
-    - /etc/kubernetes/manifests
     - /var/lib/etcd
+    - /home/k8sadmin/.kube
+    - /root/.kube
+    - /etc/cni/net.d
   tags:
     - kubeadm_reset
     - kubeadm_init
 
+
+# Install and configure etcd
 - name: Download etcd version
   get_url:
     url: https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-arm64.tar.gz
@@ -51,6 +99,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
   
 # Untar the binaries
 - name: Untar the binary
@@ -61,6 +110,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # Copy the etcd  binaries to /usr/local/bin path
 - name: Move etcd-v3.4.15-linux-amd64/etcd* contensts to /usr/local/bin
@@ -75,6 +125,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # Create extra directories for etcd
 - name: make /etc/etcd and /var/lib/etcd directories
@@ -87,6 +138,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # Copy certs
 - name: Copy certifactes and keys to /etc/etcd
@@ -101,6 +153,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # The following steps configure the etcd daemon for systemd to start on startup
 
@@ -112,6 +165,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # Daemon reload so systemd can use the new service
 - name: Daemon reload so systemd can use the new service
@@ -120,6 +174,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 # Start and enabled etcd service
 - name: Start and enable the etcd service
@@ -130,6 +185,7 @@
   when: "'masters' in group_names"
   tags:
     - etcd
+    - kubeadm_init
 
 ################################################
 ##      Configure control plane  and workers  ##
@@ -143,18 +199,13 @@
     - kubeadm_init
   when: "'workers' or 'masters' in group_names"
 
-#- name: Delete nodes
-#  shell: kubectl delete node "{{ item }}"
-#  loop:
-#    - k8sworker01
-#    - k8sworker02
-#    - k8sworker03
-#    - k8smaster01
-#  when: "'masters' in group_names"
-#  tags:
-#    - delete_nodes
-#    - kubeadm_init
-  
+- name: Copy kubeconfig for initializing the cluster
+  template:
+    src: cluster.kubeconfig.j2
+    dest: /home/k8sadmin/cluster.kubeconfig
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init 
 
 - name: kubeadm init
   shell: kubeadm init --config /home/k8sadmin/cluster.kubeconfig
@@ -286,7 +337,7 @@
 
 # Apply pod network with Flannel
 - name: Apply flannel
-  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  shell: kubectl apply -f /home/k8sadmin/kube-flannel.yml
   when: "'masters' in group_names"
   tags:
     - kubeadm_init
