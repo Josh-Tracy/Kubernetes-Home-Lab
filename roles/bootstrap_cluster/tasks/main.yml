@@ -24,13 +24,13 @@
 # Get etcd binaries:
 
  #It was discovered that by having firewalld enabled when launching flannel pods, the cluster did not start properly 
-- name: Disable firewalld
-  service:
-    name: firewalld
-    state: stopped
-  tags:
-    - kubeadm_reset
-    - kubeadm_init
+#- name: Disable firewalld
+#  service:
+#    name: firewalld
+#    state: stopped
+#  tags:
+#    - kubeadm_reset
+#    - kubeadm_init
 
 - name: bridge utils
   apt:
@@ -362,6 +362,19 @@
   tags:
     - kubeadm_init
     - join
+
+- name: Sleep for 1 minute to give pods time to come up
+  wait_for:
+    timeout: 300
+  delegate_to: localhost
+
+- name: Restart containerd incase cni0 didnt get created
+  service:
+    name: containerd
+    state: restarted
+  when: "'workers' in group_names"
+  tags:
+    - kubeadm_init
     
 # Join control nodes
 #- name: Join other control nodes to cluster
