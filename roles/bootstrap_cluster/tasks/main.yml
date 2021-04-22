@@ -335,6 +335,15 @@
   tags:
     - kubeadm_init
 
+# Copy kube-flannel.yml config to host
+- name: Copy kube-flannel.yml to host
+  template:
+    src: kube-flannel.j2
+    dest: /home/k8sadmin/kube-flannel.yml  
+  when: "'masters' in group_names"
+  tags:
+    - kubeadm_init
+
 # Apply pod network with Flannel
 - name: Apply flannel
   shell: kubectl apply -f /home/k8sadmin/kube-flannel.yml
