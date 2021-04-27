@@ -15,5 +15,6 @@
    # - { role: kubeconfigs }
     - { role: secrets }
     - { role: bootstrap_cluster }
+    - { role: nfs-server }
 
 

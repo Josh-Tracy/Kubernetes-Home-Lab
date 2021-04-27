@@ -1,2 +1,72 @@
 ---
 # tasks file for nfs-server
+
+# Install nfs and nfs-common on client
+- name: Install nfs-kernel-server on nfs server only
+  apt: 
+    pkg: nfs-kernel-server
+    state: present
+  when: "'management' in group_names"
+  tags:
+    - nfs
+
+- name: Install nfs-common on nfs clients
+  apt:
+    pkg: nfs-common
+    state: present
+  when: "'management' not in group_names"
+  tags:
+    - nfs
+
+# Create a directory to export k8sdata and permissions
+- name: Create share directory on nfs-server
+  file:
+    path: /mnt/k8sdata
+    state: directory
+    owner: k8sadmin
+    group: k8sadmin
+    mode: '0770'
+  when: "'management' in group_names"
+  tags:
+    - nfs  
+
+# Apply /etc/exports
+- name: Create /etc/exports with the newley created directories we want to share
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: '0644'
+  when: "'management' in group_names"
+  tags:
+    - nfs
+
+# Update exports table
+- name: Exportfs to update exports tables
+  shell: /usr/sbin/exportfs -ra
+  when: "'management' in group_names"
+  tags:
+    - nfs
+
+#Update /etc/fstab on client
+- name: Add the mount point to /etc/fstab on clients
+  lineinfile:
+    path: /etc/fstab
+    line: "192.168.50.113:/mnt/k8sdata     /mnt    nfs     defaults        0       1"
+    backup: yes
+  when: "'management' not in group_names"
+  tags:
+    - nfs
+
+#Mount -a
+- name: Perform a mount -a
+  shell: mount -a
+  when: "'management' not in group_names"
+  tags:
+    - nfs
+
+
+
+
+  
