@@ -1,2 +1,5 @@
 ---
 # vars file for nfs-server
+export01: /mnt/k8sdata
+#export02:
+#export03:

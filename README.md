@@ -13,6 +13,7 @@ Link to the youtube series:
 - Part 5: [Creating Encryption Secrets for Kubernetes Cluster with Ansible](https://www.youtube.com/watch?v=DkkJviaWklY&t=162s)
 - Part 6: [Creating a CA and certificates for Kubernetes Cluster with Ansible](https://www.youtube.com/watch?v=l-gOIylwsWo)
 - Part 7: [Deploying Kubeadm and Joining Nodes](https://www.youtube.com/watch?v=qjJOABXe1JA&t=2s)
+- Part 8: [Creating an NFS server for persistent Storage](https://www.youtube.com/watch?v=L97Z5In3KXQ)
 
 
 ## Architecure and Versions

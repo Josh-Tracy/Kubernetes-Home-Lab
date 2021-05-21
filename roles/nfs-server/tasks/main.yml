@@ -1,6 +1,7 @@
 ---
 # tasks file for nfs-server
 
+# Note: This has been modified 
 # Install nfs and nfs-common on client
 - name: Install nfs-kernel-server on nfs server only
   apt: 
@@ -21,11 +22,13 @@
 # Create a directory to export k8sdata and permissions
 - name: Create share directory on nfs-server
   file:
-    path: /mnt/k8sdata
+    path: "{{ item }}"
     state: directory
     owner: k8sadmin
     group: k8sadmin
     mode: '0770'
+  loop:
+    - "{{ export01 }}"
   when: "'management' in group_names"
   tags:
     - nfs  

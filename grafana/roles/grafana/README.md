@@ -1,15 +1,12 @@
-NFS Server
+Role Name
 =========
 
-- This role creates an nfs server on the specified host and creates the intended directories to export.
-- This role configures clients to connect to the exported directory on the nfs server.
+A brief description of the role goes here.
 
 Requirements
 ------------
 
-- Identify the names of exports to be created and their options
-- Identify nfs server and clients and seperate them by host group
-- Access to a repo to install nfs packages is required
+Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
 Role Variables
 --------------
