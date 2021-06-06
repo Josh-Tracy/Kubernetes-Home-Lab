@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+      app: webserver
+      type: front-end
+spec:
+  type: NodePort
+    ports:
+      - targetPort: 80
+        port: 80
+        nodePort: 30080
+    selector:
+      app: webserver
+      type: front-end
