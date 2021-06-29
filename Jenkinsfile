@@ -26,7 +26,7 @@ pipeline {
                 }
             steps {
                 echo 'Building..'
-                echo "Building version ${VERSION}"
+                echo 'Building version ${VERSION}'
             }
         }
         stage('Test') {
