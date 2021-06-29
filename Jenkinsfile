@@ -1,5 +1,6 @@
 // Jenkinsfiles are written in groovy which uses Java and C form comments
 //CODE_CHANGES = getGitChanges()
+def gv
 pipeline {
     agent any
     parameters {
@@ -18,16 +19,24 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            when {
-                expression {
-                   // BRANCH_NAME == 'feature/jenkins' && CODE_CHANGES == true
-                    params.executeTests == true
-                }    
-            }
+        stage('init') {
             steps {
-                echo 'Building..'
-                echo 'Building version ${VERSION}'
+                script {
+                    gv = load "pipeline.groovy"
+                }
+            }
+        }
+        stage('Build') {
+           // when {
+               // expression {
+                   // BRANCH_NAME == 'feature/jenkins' && CODE_CHANGES == true
+                    //params.executeTests == true
+                //}    
+            //}
+            steps {
+                script { 
+                    gv.buildApp()
+                }
             }
         }
         stage('Test') {
