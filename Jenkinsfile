@@ -14,7 +14,7 @@ pipeline {
     environment {
         VERSION = 'x.x'
         // Requires credentials and credentials binding plugin
-        SERVER_CREDENTIALS = credentials('ID')
+        //SERVER_CREDENTIALS = credentials('ID')
     }
 
     stages {
