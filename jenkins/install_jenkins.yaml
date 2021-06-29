@@ -1,0 +1,21 @@
+- name: Install Jenkins
+  hosts: k8smanagement01
+  become: true
+
+  tasks:
+
+    - name: Install Java runtime environment
+      apt:
+        pkg: openjdk-11-jre
+      tags:
+        - jenkins
+
+    - name: Add jenkins repository key
+      get_url:
+
+      wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \
+    /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+
