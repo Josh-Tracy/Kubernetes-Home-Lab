@@ -23,7 +23,8 @@ pipeline {
                 expression {
                    // BRANCH_NAME == 'feature/jenkins' && CODE_CHANGES == true
                     params.executeTests == true
-                }
+                }    
+            }
             steps {
                 echo 'Building..'
                 echo 'Building version ${VERSION}'
