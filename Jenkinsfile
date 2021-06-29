@@ -4,8 +4,8 @@ pipeline {
     agent any
     parameters {
        // string(name: 'VERSION', defaultValue: ''. description: 'version to deploy on prod')
-        choice(name: 'VERISON', choices: ['1.1.0', '1.1.1'], description: '')
-        booleanParam(name: 'executeTests', defaultValue: true, description: '')
+        choice(name: 'VERISON', choices: ['1.1.0', '1.1.1'], description: 'Pick a version')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'Execute test if true')
     }
     tools {
         // tool name from Jenkins. Defaults maven, jdk, gradle
@@ -45,7 +45,6 @@ pipeline {
             }
         }
     }
-    //post {
+}    //post {
       //  always
    // }
-}
