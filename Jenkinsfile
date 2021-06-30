@@ -11,7 +11,7 @@ pipeline {
     tools {
         // tool name from Jenkins. Defaults maven, jdk, gradle
         maven 'Maven'
-        ansible 'Ansible'
+        ansible 'Ansible2.9.6'
     }
     environment {
         VERSION = 'x.x'
