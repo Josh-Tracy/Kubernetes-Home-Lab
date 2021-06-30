@@ -11,7 +11,6 @@ pipeline {
     tools {
         // tool name from Jenkins. Defaults maven, jdk, gradle
         maven 'Maven'
-        ansible 'Ansible2.9.6'
     }
     environment {
         VERSION = 'x.x'
@@ -37,6 +36,9 @@ pipeline {
             steps {
                 script { 
                     gv.buildApp()
+                }
+                ansible('Ansible2.9.6') {
+                    sh 'ansible --version'
                 }
             }
         }
